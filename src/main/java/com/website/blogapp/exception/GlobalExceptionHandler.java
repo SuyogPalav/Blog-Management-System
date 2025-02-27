@@ -1,5 +1,7 @@
 package com.website.blogapp.exception;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +15,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentConversionNotSupportedException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
@@ -130,26 +136,76 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
 	}
-	
+
 	@ExceptionHandler(PropertyReferenceException.class)
-	public ResponseEntity<ErrorMessage> propertyReferenceExceptionHandler(PropertyReferenceException ex, WebRequest webRequest) {
+	public ResponseEntity<ErrorMessage> propertyReferenceExceptionHandler(PropertyReferenceException ex,
+			WebRequest webRequest) {
 		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
 				webRequest.getDescription(false), false);
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
 	}
-	
-	
+
 	@ExceptionHandler(IllegalArgumentException.class)
-	public ResponseEntity<ErrorMessage> illegalArgumentExceptionHandler(IllegalArgumentException ex, WebRequest webRequest) {
+	public ResponseEntity<ErrorMessage> illegalArgumentExceptionHandler(IllegalArgumentException ex,
+			WebRequest webRequest) {
 		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
 				webRequest.getDescription(false), false);
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
 	}
-	
-	
+
+	@ExceptionHandler(FileNotFoundException.class)
+	public ResponseEntity<ErrorMessage> fileNotFoundExceptionHandler(FileNotFoundException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
+				webRequest.getDescription(false), false);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+	}
+
+	@ExceptionHandler(IOException.class)
+	public ResponseEntity<ErrorMessage> iOExceptionHandler(IOException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
+				webRequest.getDescription(false), false);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+	}
+
+	@ExceptionHandler(MethodArgumentConversionNotSupportedException.class)
+	public ResponseEntity<ErrorMessage> methodArgumentConversionNotSupportedExceptionHandler(
+			MethodArgumentConversionNotSupportedException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
+				webRequest.getDescription(false), false);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+	}
+
+	@ExceptionHandler(MultipartException.class)
+	public ResponseEntity<ErrorMessage> multipartExceptionHandler(MultipartException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
+				webRequest.getDescription(false), false);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+	}
+
+	@ExceptionHandler(MissingServletRequestPartException.class)
+	public ResponseEntity<ErrorMessage> missingServletRequestPartExceptionHandler(MissingServletRequestPartException ex,
+			WebRequest webRequest) {
+		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
+				webRequest.getDescription(false), false);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+	}
+
+	@ExceptionHandler(MissingPathVariableException.class)
+	public ResponseEntity<ErrorMessage> missingPathVariableExceptionHandler(MissingPathVariableException ex,
+			WebRequest webRequest) {
+		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
+				webRequest.getDescription(false), false);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+	}
 
 }
