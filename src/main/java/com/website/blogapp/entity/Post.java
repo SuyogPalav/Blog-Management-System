@@ -35,7 +35,7 @@ public class Post {
 	@Column(name = "post_content", nullable = false, length = 5000)
 	private String postContent;
 
-	@Column(name = "post_imageName", nullable = false, length = 100)
+	@Column(name = "post_imageName")
 	private String postImageName;
 
 	@Column(name = "post_createdDate", nullable = false)

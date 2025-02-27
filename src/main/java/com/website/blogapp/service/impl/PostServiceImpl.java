@@ -1,15 +1,18 @@
 package com.website.blogapp.service.impl;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.website.blogapp.constants.PostConstant;
 import com.website.blogapp.entity.Category;
@@ -26,6 +29,7 @@ import com.website.blogapp.payload.PostDto;
 import com.website.blogapp.repository.CategoryRepository;
 import com.website.blogapp.repository.PostRepository;
 import com.website.blogapp.repository.UserRepository;
+import com.website.blogapp.service.FileService;
 import com.website.blogapp.service.PostService;
 
 @Service
@@ -42,6 +46,12 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
+	
+	@Autowired
+	private FileService fileService;
+	
+	@Value("${project.image}")
+	private String path;
 
 	@Override
 	public PostContentResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
@@ -81,18 +91,19 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId) {
+	public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId, MultipartFile postImageFile) throws IOException {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new UserNotFoundException("User " + userId + " does not exist."));
 
 		Category category = categoryRepository.findById(categoryId)
 				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
 
+		String fileName = fileService.uploadImage(path, postImageFile);
 		Post post = postMapper.dtoToPost(postDto);
 
 //		post.setPostTitle(postDto.getPostTitle());
 //		post.setPostContent(postDto.getPostContent());
-		post.setPostImageName(postDto.getPostImageName());
+		post.setPostImageName(fileName);		
 		post.setPostCreatedDate(new Date());
 		post.setUser(user);
 		post.setCategory(category);
@@ -103,15 +114,16 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public PostDto updatePost(Integer postId, PostDto postDto) {
+	public PostDto updatePost(Integer postId, PostDto postDto, MultipartFile postImageFile) throws IOException {
 		Post existingPost = postRepository.findById(postId)
 				.orElseThrow(() -> new PostNotFoundException("Post " + postId + " does not exist."));
+		
 		existingPost.setPostTitle(postDto.getPostTitle());
 		existingPost.setPostContent(postDto.getPostContent());
-		existingPost.setPostImageName(postDto.getPostImageName());
-//		existingPost.setPostCreatedDate(new Date());
+		String fileName = fileService.uploadImage(path, postImageFile);
+		existingPost.setPostImageName(fileName);	
+		
 		postRepository.save(existingPost);
-
 		PostDto postDtoUpdated = postMapper.postToDto(existingPost);
 		return postDtoUpdated;
 

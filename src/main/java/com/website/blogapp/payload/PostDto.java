@@ -26,7 +26,7 @@ public class PostDto {
 	@Size(min = 3, max = 5000, message = "Content must be between 3 and 5000 characters")
 	private String postContent;
 
-	@NotBlank(message = "Image name cannot be blank")
+//	@NotBlank(message = "Image name cannot be blank")
 	private String postImageName;
 
 	private Date postCreatedDate;
