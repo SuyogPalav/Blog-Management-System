@@ -72,16 +72,11 @@ public class PostServiceImpl implements PostService {
 		List<PostDto> postDtoPageContent = postPageContent.stream().map((post) -> postMapper.postToDto(post))
 				.collect(Collectors.toList());
 
-		PostContentResponse postContentResponse = new PostContentResponse();
-		postContentResponse.setPostDtoPageContent(postDtoPageContent);
-		postContentResponse.setPageNumber(page.getNumber());
-		postContentResponse.setPageSize(page.getSize());
-		postContentResponse.setTotalElements(page.getTotalElements());
-		postContentResponse.setTotalPages(page.getTotalPages());
-		postContentResponse.setLastPage(page.isLast());
+		PostContentResponse postContentResponse = PostContentResponse.builder().postDtoPageContent(postDtoPageContent)
+				.pageNumber(page.getNumber()).pageSize(page.getSize()).totalElements(page.getTotalElements())
+				.totalPages(page.getTotalPages()).lastPage(page.isLast()).build();
 
 		return postContentResponse;
-
 	}
 
 	@Override
@@ -144,8 +139,10 @@ public class PostServiceImpl implements PostService {
 				.orElseThrow(() -> new PostNotFoundException("Post " + postId + " does not exist."));
 
 		postRepository.deleteById(postId);
-		ApiResponse apiResponse = new ApiResponse("Post " + postId + " has been successfully deleted",
-				PostConstant.SUCCESS);
+
+		ApiResponse apiResponse = ApiResponse.builder().message("Post " + postId + " has been successfully deleted")
+				.success(PostConstant.SUCCESS).build();
+
 		return apiResponse;
 
 	}
@@ -157,7 +154,8 @@ public class PostServiceImpl implements PostService {
 		}
 
 		postRepository.deleteAll();
-		ApiResponse apiResponse = new ApiResponse("All posts has been successfully deleted", PostConstant.SUCCESS);
+		ApiResponse apiResponse = ApiResponse.builder().message("All posts has been successfully deleted")
+				.success(PostConstant.SUCCESS).build();
 		return apiResponse;
 	}
 
