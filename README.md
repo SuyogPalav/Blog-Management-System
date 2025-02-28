@@ -16,7 +16,7 @@ A **Spring Boot-based RESTful API** for a Blog Management System with full **CRU
 
 ## ⚙️ Technologies Used
 
-- **Java**
+- **Java (Core & Advanced)**
 - **Spring Boot**
 - **Spring Data JPA**
 - **Hibernate**
