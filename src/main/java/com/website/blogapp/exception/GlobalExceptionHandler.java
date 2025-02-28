@@ -31,8 +31,12 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(UserDatabaseIsEmptyException.class)
 	public ResponseEntity<ErrorMessage> userDatabaseIsEmptyExceptionHandler(UserDatabaseIsEmptyException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+//		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
+//				webRequest.getDescription(false), false);
+
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 //		return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.NOT_FOUND);
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
@@ -41,8 +45,9 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<ErrorMessage> userNotFoundExceptionHandler(UserNotFoundException ex, WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
@@ -73,8 +78,9 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(CategoryDatabaseIsEmptyException.class)
 	public ResponseEntity<ErrorMessage> categoryDatabaseIsEmptyExceptionHandler(CategoryDatabaseIsEmptyException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
@@ -83,8 +89,9 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(CategoryNotFoundException.class)
 	public ResponseEntity<ErrorMessage> categoryNotFoundExceptionHandler(CategoryNotFoundException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
@@ -93,8 +100,9 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(NoResourceFoundException.class)
 	public ResponseEntity<ErrorMessage> noResourceFoundExceptionHandler(NoResourceFoundException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
@@ -103,8 +111,9 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public ResponseEntity<ErrorMessage> httpRequestMethodNotSupportedExceptionHandler(
 			HttpRequestMethodNotSupportedException ex, WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
@@ -113,8 +122,9 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ErrorMessage> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(),
-				"Required request body is missing", webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message("Required request body is missing")
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
@@ -123,16 +133,18 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(PostDatabaseIsEmptyException.class)
 	public ResponseEntity<ErrorMessage> postDatabasIsEmptyExceptionHandler(PostDatabaseIsEmptyException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 	}
 
 	@ExceptionHandler(PostNotFoundException.class)
 	public ResponseEntity<ErrorMessage> postNotFoundExceptionHandler(PostNotFoundException ex, WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
@@ -141,8 +153,9 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(PropertyReferenceException.class)
 	public ResponseEntity<ErrorMessage> propertyReferenceExceptionHandler(PropertyReferenceException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
@@ -151,8 +164,9 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ErrorMessage> illegalArgumentExceptionHandler(IllegalArgumentException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
@@ -160,16 +174,18 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(FileNotFoundException.class)
 	public ResponseEntity<ErrorMessage> fileNotFoundExceptionHandler(FileNotFoundException ex, WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
-
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
+		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 	}
 
 	@ExceptionHandler(IOException.class)
 	public ResponseEntity<ErrorMessage> iOExceptionHandler(IOException ex, WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 	}
@@ -177,16 +193,18 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentConversionNotSupportedException.class)
 	public ResponseEntity<ErrorMessage> methodArgumentConversionNotSupportedExceptionHandler(
 			MethodArgumentConversionNotSupportedException ex, WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 	}
 
 	@ExceptionHandler(MultipartException.class)
 	public ResponseEntity<ErrorMessage> multipartExceptionHandler(MultipartException ex, WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 	}
@@ -194,8 +212,9 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MissingServletRequestPartException.class)
 	public ResponseEntity<ErrorMessage> missingServletRequestPartExceptionHandler(MissingServletRequestPartException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 	}
@@ -203,8 +222,9 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MissingPathVariableException.class)
 	public ResponseEntity<ErrorMessage> missingPathVariableExceptionHandler(MissingPathVariableException ex,
 			WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 	}
@@ -212,8 +232,10 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	public ResponseEntity<ErrorMessage> missingServletRequestParameterExceptionHandler(
 			MissingServletRequestParameterException ex, WebRequest webRequest) {
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
-				webRequest.getDescription(false), false);
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
+		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
 	}

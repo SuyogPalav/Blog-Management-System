@@ -3,6 +3,7 @@ package com.website.blogapp.exception;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ErrorMessage {
 	private Date timestamp;
 	private Integer statusCode;

@@ -1,14 +1,14 @@
 package com.website.blogapp.payload;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Builder
 public class ApiResponse {
 	private String message;
 	private Boolean success;

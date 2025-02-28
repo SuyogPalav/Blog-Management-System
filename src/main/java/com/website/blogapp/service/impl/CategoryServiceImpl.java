@@ -29,20 +29,6 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private CategoryMapper categoryMapper;
-/*
-	@Override
-	public List<CategoryDto> getAllCategory() {
-		if (categoryRepository.count() == 0) {
-			throw new CategoryDatabaseIsEmptyException("No categories found in the database.");
-		}
-
-		List<Category> category = categoryRepository.findAll();
-		List<CategoryDto> categoryDto = category.stream().map(categoryMapper::categoryToDto).toList();
-		return categoryDto;
-
-	}*/
-	
-	
 
 	@Override
 	public CategoryContentResponse getAllCategory(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
@@ -56,20 +42,17 @@ public class CategoryServiceImpl implements CategoryService {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 		Page<Category> page = categoryRepository.findAll(pageable);
 		List<Category> categoryPageContent = page.getContent();
-		List<CategoryDto> categoryDtoPageContent = categoryPageContent.stream().map((category) -> categoryMapper.categoryToDto(category)).collect(Collectors.toList());
+		List<CategoryDto> categoryDtoPageContent = categoryPageContent.stream()
+				.map((category) -> categoryMapper.categoryToDto(category)).collect(Collectors.toList());
 
-		CategoryContentResponse categoryContentResponse = new CategoryContentResponse();
-		categoryContentResponse.setCategoryDtoPageContent(categoryDtoPageContent);
-		categoryContentResponse.setPageNumber(page.getNumber());
-		categoryContentResponse.setPageSize(page.getSize());
-		categoryContentResponse.setTotalElements(page.getTotalElements());
-		categoryContentResponse.setTotalPages(page.getTotalPages());
-		categoryContentResponse.setLastPage(page.isLast());
+		CategoryContentResponse categoryContentResponse = CategoryContentResponse.builder()
+				.categoryDtoPageContent(categoryDtoPageContent).pageNumber(page.getNumber()).pageSize(page.getSize())
+				.totalElements(page.getTotalElements()).totalPages(page.getTotalPages()).lastPage(page.isLast())
+				.build();
 
 		return categoryContentResponse;
 
 	}
-	
 
 	@Override
 	public CategoryDto getSingleCategory(Integer categoryId) {
@@ -113,7 +96,11 @@ public class CategoryServiceImpl implements CategoryService {
 				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
 
 		categoryRepository.deleteById(categoryId);
-		ApiResponse apiResponse = new ApiResponse("Category " + categoryId + " has been successfully deleted", CategoryConstant.SUCCESS);
+
+		ApiResponse apiResponse = ApiResponse.builder()
+				.message("Category " + categoryId + " has been successfully deleted").success(CategoryConstant.SUCCESS)
+				.build();
+
 		return apiResponse;
 	}
 
@@ -124,7 +111,10 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 
 		categoryRepository.deleteAll();
-		ApiResponse apiResponse = new ApiResponse("All categories has been successfully deleted", CategoryConstant.SUCCESS);
+
+		ApiResponse apiResponse = ApiResponse.builder().message("All categories has been successfully deleted")
+				.success(CategoryConstant.SUCCESS).build();
+
 		return apiResponse;
 	}
 
@@ -134,7 +124,7 @@ public class CategoryServiceImpl implements CategoryService {
 		if (categories.isEmpty()) {
 			throw new CategoryNotFoundException("Category " + categoryTitle + " does not exist.");
 		}
-		
+
 		List<CategoryDto> categoryDto = categories.stream().map((category) -> categoryMapper.categoryToDto(category))
 				.collect(Collectors.toList());
 		return categoryDto;

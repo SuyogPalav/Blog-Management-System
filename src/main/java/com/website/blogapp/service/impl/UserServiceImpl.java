@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.website.blogapp.constants.UserConstant;
 import com.website.blogapp.entity.User;
 import com.website.blogapp.exception.UserDatabaseIsEmptyException;
 import com.website.blogapp.exception.UserNotFoundException;
@@ -83,7 +84,8 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new UserNotFoundException("User " + userId + " does not exist."));
 
 		userRepository.deleteById(userId);
-		ApiResponse apiResponse = new ApiResponse("User " + userId + " has been successfully deleted", true);
+		ApiResponse apiResponse = ApiResponse.builder().message("User " + userId + " has been successfully deleted")
+				.success(UserConstant.SUCCESS).build();
 		return apiResponse;
 	}
 
@@ -94,7 +96,8 @@ public class UserServiceImpl implements UserService {
 		}
 
 		userRepository.deleteAll();
-		ApiResponse apiResponse = new ApiResponse("All users has been succssfully deleted", true);
+		ApiResponse apiResponse = ApiResponse.builder().message("All users has been succssfully deleted")
+				.success(UserConstant.SUCCESS).build();
 		return apiResponse;
 	}
 
