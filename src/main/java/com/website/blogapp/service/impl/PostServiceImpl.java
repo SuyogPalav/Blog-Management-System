@@ -27,6 +27,7 @@ import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.PostContentResponse;
 import com.website.blogapp.payload.PostDto;
 import com.website.blogapp.repository.CategoryRepository;
+import com.website.blogapp.repository.PostCriteriaRepository;
 import com.website.blogapp.repository.PostRepository;
 import com.website.blogapp.repository.UserRepository;
 import com.website.blogapp.service.FileService;
@@ -39,6 +40,9 @@ public class PostServiceImpl implements PostService {
 	private PostRepository postRepository;
 
 	@Autowired
+	private PostCriteriaRepository postCriteriaRepository;
+
+	@Autowired
 	private PostMapper postMapper;
 
 	@Autowired
@@ -46,10 +50,10 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
-	
+
 	@Autowired
 	private FileService fileService;
-	
+
 	@Value("${project.image}")
 	private String path;
 
@@ -65,8 +69,8 @@ public class PostServiceImpl implements PostService {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 		Page<Post> page = postRepository.findAll(pageable);
 		List<Post> postPageContent = page.getContent();
-		List<PostDto> postDtoPageContent = postPageContent.stream().map((post) -> postMapper.postToDto(post)).collect(Collectors.toList());
-
+		List<PostDto> postDtoPageContent = postPageContent.stream().map((post) -> postMapper.postToDto(post))
+				.collect(Collectors.toList());
 
 		PostContentResponse postContentResponse = new PostContentResponse();
 		postContentResponse.setPostDtoPageContent(postDtoPageContent);
@@ -91,7 +95,8 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId, MultipartFile postImageFile) throws IOException {
+	public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId, MultipartFile postImageFile)
+			throws IOException {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new UserNotFoundException("User " + userId + " does not exist."));
 
@@ -103,7 +108,7 @@ public class PostServiceImpl implements PostService {
 
 //		post.setPostTitle(postDto.getPostTitle());
 //		post.setPostContent(postDto.getPostContent());
-		post.setPostImageName(fileName);		
+		post.setPostImageName(fileName);
 		post.setPostCreatedDate(new Date());
 		post.setUser(user);
 		post.setCategory(category);
@@ -117,12 +122,12 @@ public class PostServiceImpl implements PostService {
 	public PostDto updatePost(Integer postId, PostDto postDto, MultipartFile postImageFile) throws IOException {
 		Post existingPost = postRepository.findById(postId)
 				.orElseThrow(() -> new PostNotFoundException("Post " + postId + " does not exist."));
-		
+
 		existingPost.setPostTitle(postDto.getPostTitle());
 		existingPost.setPostContent(postDto.getPostContent());
 		String fileName = fileService.uploadImage(path, postImageFile);
-		existingPost.setPostImageName(fileName);	
-		
+		existingPost.setPostImageName(fileName);
+
 		postRepository.save(existingPost);
 		PostDto postDtoUpdated = postMapper.postToDto(existingPost);
 		return postDtoUpdated;
@@ -139,7 +144,8 @@ public class PostServiceImpl implements PostService {
 				.orElseThrow(() -> new PostNotFoundException("Post " + postId + " does not exist."));
 
 		postRepository.deleteById(postId);
-		ApiResponse apiResponse = new ApiResponse("Post " + postId + " has been successfully deleted", PostConstant.SUCCESS);
+		ApiResponse apiResponse = new ApiResponse("Post " + postId + " has been successfully deleted",
+				PostConstant.SUCCESS);
 		return apiResponse;
 
 	}
@@ -156,14 +162,14 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> getPostByCateory(Integer cateoryId) {
-		Category category = categoryRepository.findById(cateoryId)
-				.orElseThrow(() -> new CategoryNotFoundException("Category " + cateoryId + " does not exist."));
+	public List<PostDto> getPostByCategory(Integer categoryId) {
+		Category category = categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
 
 		List<Post> posts = postRepository.findByCategory(category);
 
 		if (posts.isEmpty()) {
-			throw new PostNotFoundException("Category " + cateoryId + " does not have any post.");
+			throw new PostNotFoundException("Category " + categoryId + " does not have any post.");
 		}
 
 		List<PostDto> postDto = posts.stream().map((post) -> postMapper.postToDto(post)).collect(Collectors.toList());
@@ -192,6 +198,20 @@ public class PostServiceImpl implements PostService {
 			throw new PostNotFoundException("Kindly search with another keywords");
 		}
 
+		List<PostDto> postDto = posts.stream().map((post) -> postMapper.postToDto(post)).collect(Collectors.toList());
+		return postDto;
+	}
+
+	@Override
+	public List<PostDto> findPostByTitleAndCategory(Integer categoryId, String postTitle) {
+		categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
+
+		List<Post> posts = postCriteriaRepository.findPostByTitleAndCategory(postTitle, categoryId);
+
+		if (posts.isEmpty()) {
+			throw new PostNotFoundException("Post title is not present in given category: " + categoryId);
+		}
 		List<PostDto> postDto = posts.stream().map((post) -> postMapper.postToDto(post)).collect(Collectors.toList());
 		return postDto;
 	}
