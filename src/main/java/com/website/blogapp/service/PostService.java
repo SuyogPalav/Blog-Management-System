@@ -14,7 +14,8 @@ public interface PostService {
 
 	public PostDto getSinglePost(Integer postId);
 
-	public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId, MultipartFile postImageFile) throws IOException;
+	public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId, MultipartFile postImageFile)
+			throws IOException;
 
 	public PostDto updatePost(Integer postId, PostDto postDto, MultipartFile postImageFile) throws IOException;
 
@@ -22,11 +23,12 @@ public interface PostService {
 
 	public ApiResponse deleteAllPost();
 
-	public List<PostDto> getPostByCateory(Integer cateoryId);
+	public List<PostDto> getPostByCategory(Integer categoryId);
 
 	public List<PostDto> getPostByUser(Integer userId);
 
 	public List<PostDto> searchPostByTitle(String keywords);
 
+	public List<PostDto> findPostByTitleAndCategory(Integer categoryId, String postTitle);
 
 }

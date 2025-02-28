@@ -100,7 +100,7 @@ public class PostController {
 
 	@GetMapping("/read/category/{categoryId}/post")
 	public ResponseEntity<List<PostDto>> getPostByCategory(@PathVariable("categoryId") Integer categoryId) {
-		List<PostDto> postDto = postService.getPostByCateory(categoryId);
+		List<PostDto> postDto = postService.getPostByCategory(categoryId);
 		return ResponseEntity.status(HttpStatus.OK).body(postDto);
 
 	}
@@ -135,5 +135,15 @@ public class PostController {
 		StreamUtils.copy(inputStream, response.getOutputStream());
 
 	}
+
+	@GetMapping("/post/category/{categoryId}/postTitle/{postTitle}")
+	public ResponseEntity<List<PostDto>> findPostByTitleAndCategory(@PathVariable("categoryId") Integer categoryId, 
+			@PathVariable("postTitle") String postTitle) {
+		List<PostDto> postDto = postService.findPostByTitleAndCategory(categoryId, postTitle);
+		return ResponseEntity.status(HttpStatus.OK).body(postDto);
+	}
+	
+
+
 
 }

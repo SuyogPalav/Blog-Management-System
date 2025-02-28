@@ -16,6 +16,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -206,6 +207,15 @@ public class GlobalExceptionHandler {
 				webRequest.getDescription(false), false);
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+	}
+
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	public ResponseEntity<ErrorMessage> missingServletRequestParameterExceptionHandler(
+			MissingServletRequestParameterException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
+				webRequest.getDescription(false), false);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+
 	}
 
 }
