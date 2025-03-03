@@ -1,6 +1,8 @@
 package com.website.blogapp.payload;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -35,4 +37,5 @@ public class PostDto {
 	
 	private UserDto user;			// keep this field name: user, otherwise it'll create mapping error
 
+	private Set<CommentDto> comment = new HashSet<>();
 }
