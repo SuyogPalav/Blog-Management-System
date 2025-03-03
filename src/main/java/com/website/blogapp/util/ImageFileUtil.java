@@ -8,7 +8,7 @@ import java.util.UUID;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class FileUtil {
+public class ImageFileUtil {
 	public static String checkFileValidation(String imagefileName) {
 		if (imagefileName == null || imagefileName.isEmpty()) {
 			throw new IllegalArgumentException("File name is invalid.");

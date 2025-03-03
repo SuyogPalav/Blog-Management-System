@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.website.blogapp.service.FileService;
-import com.website.blogapp.util.FileUtil;
+import com.website.blogapp.util.ImageFileUtil;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -20,10 +20,10 @@ public class FileServiceImpl implements FileService {
 	public String uploadImage(String path, MultipartFile postImageName) throws IOException {
 		// Validate file type
 		String imagefileName = postImageName.getOriginalFilename();
-		String imageFileExtension = FileUtil.checkFileValidation(imagefileName);
-		String randomImageFileName = FileUtil.createRandomFileName(imageFileExtension);
-		String imageFilePath = FileUtil.getFilePath(path, randomImageFileName);
-		FileUtil.createDirectoryIfNotExist(path);
+		String imageFileExtension = ImageFileUtil.checkFileValidation(imagefileName);
+		String randomImageFileName = ImageFileUtil.createRandomFileName(imageFileExtension);
+		String imageFilePath = ImageFileUtil.getFilePath(path, randomImageFileName);
+		ImageFileUtil.createDirectoryIfNotExist(path);
 
 		// Save file
 		Files.copy(postImageName.getInputStream(), Paths.get(imageFilePath));
@@ -33,7 +33,7 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public InputStream downloadImage(String path, String randomFileName) throws FileNotFoundException {
-		String imageFilePath = FileUtil.getFilePath(path, randomFileName);
+		String imageFilePath = ImageFileUtil.getFilePath(path, randomFileName);
 		File file = new File(imageFilePath);
 
 		if (!file.exists()) {

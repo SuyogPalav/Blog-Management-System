@@ -1,6 +1,7 @@
 package com.website.blogapp.service.impl;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +34,9 @@ import com.website.blogapp.repository.PostRepository;
 import com.website.blogapp.repository.UserRepository;
 import com.website.blogapp.service.FileService;
 import com.website.blogapp.service.PostService;
+import com.website.blogapp.util.CsvFileUtil;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -212,6 +217,17 @@ public class PostServiceImpl implements PostService {
 		}
 		List<PostDto> postDto = posts.stream().map((post) -> postMapper.postToDto(post)).collect(Collectors.toList());
 		return postDto;
+	}
+
+	@Override
+	public void exportPostInCsv(Integer userId, HttpServletResponse response) throws IOException {
+		List<PostDto> postDto = this.getPostByUser(userId);
+		String fileName = "User-" + userId + " Posts.csv";
+		response.setContentType("text/csv");
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "");
+		
+		PrintWriter writer = response.getWriter();
+		CsvFileUtil.writePostToCsv(writer, postDto);
 	}
 
 }
