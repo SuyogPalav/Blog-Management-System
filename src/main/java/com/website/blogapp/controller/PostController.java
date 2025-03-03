@@ -137,13 +137,17 @@ public class PostController {
 	}
 
 	@GetMapping("/post/category/{categoryId}/postTitle/{postTitle}")
-	public ResponseEntity<List<PostDto>> findPostByTitleAndCategory(@PathVariable("categoryId") Integer categoryId, 
+	public ResponseEntity<List<PostDto>> findPostByTitleAndCategory(@PathVariable("categoryId") Integer categoryId,
 			@PathVariable("postTitle") String postTitle) {
 		List<PostDto> postDto = postService.findPostByTitleAndCategory(categoryId, postTitle);
 		return ResponseEntity.status(HttpStatus.OK).body(postDto);
 	}
-	
 
+	@GetMapping("/post/download/csv/user/{userId}")
+	public void exportPostInCsv(@PathVariable("userId") Integer userId, HttpServletResponse response)
+			throws IOException {
+		postService.exportPostInCsv(userId, response);
 
+	}
 
 }

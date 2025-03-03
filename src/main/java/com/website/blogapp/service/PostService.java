@@ -9,6 +9,8 @@ import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.PostContentResponse;
 import com.website.blogapp.payload.PostDto;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 public interface PostService {
 	public PostContentResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 
@@ -31,4 +33,5 @@ public interface PostService {
 
 	public List<PostDto> findPostByTitleAndCategory(Integer categoryId, String postTitle);
 
+	public void exportPostInCsv(Integer userId, HttpServletResponse response) throws IOException;
 }
