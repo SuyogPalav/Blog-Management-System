@@ -2,6 +2,7 @@ package com.website.blogapp.exception;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +178,7 @@ public class GlobalExceptionHandler {
 		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
 				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
 				.description(webRequest.getDescription(false)).success(false).build();
-		
+
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 	}
 
@@ -235,7 +236,18 @@ public class GlobalExceptionHandler {
 		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
 				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
 				.description(webRequest.getDescription(false)).success(false).build();
-		
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+
+	}
+
+	@ExceptionHandler(FileAlreadyExistsException.class)
+	public ResponseEntity<ErrorMessage> fileAlreadyExistsExceptionHandler(FileAlreadyExistsException ex,
+			WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
+
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
 	}
