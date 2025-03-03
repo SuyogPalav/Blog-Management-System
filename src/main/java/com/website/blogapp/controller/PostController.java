@@ -119,8 +119,8 @@ public class PostController {
 			@PathVariable("postId") Integer postId) throws IOException {
 
 		PostDto postDto = postService.getSinglePost(postId);
-		String fileName = fileService.uploadImage(path, postImageFile);
-		postDto.setPostImageName(fileName);
+		String randomImageFileName = fileService.uploadImage(path, postImageFile);
+		postDto.setPostImageName(randomImageFileName);
 		PostDto postDtoUpdated = postService.updatePost(postId, postDto, postImageFile);
 
 		return ResponseEntity.status(HttpStatus.OK).body(postDtoUpdated);
