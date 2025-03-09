@@ -7,13 +7,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -264,8 +267,51 @@ public class GlobalExceptionHandler {
 
 	}
 
-	@ExceptionHandler(AuthenticationException.class)
-	public ResponseEntity<ErrorMessage> authenticationExceptionHandler(AuthenticationException ex,
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ErrorMessage> accessDeniedExceptionHandler(AccessDeniedException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.FORBIDDEN.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorMessage);
+
+	}
+
+	@ExceptionHandler(AccountStatusException.class)
+	public ResponseEntity<ErrorMessage> accountStatusExceptionHandler(AccountStatusException ex,
+			WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.FORBIDDEN.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorMessage);
+
+	}
+
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	public ResponseEntity<ErrorMessage> authorizationDeniedExceptionHandler(AuthorizationDeniedException ex,
+			WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.UNAUTHORIZED.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
+
+	}
+
+	@ExceptionHandler(RoleAlreadyExistException.class)
+	public ResponseEntity<ErrorMessage> roleAlreadyExistExceptionHandler(RoleAlreadyExistException ex,
+			WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.UNAUTHORIZED.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
+
+	}
+
+	@ExceptionHandler(NoSuchElementException.class)
+	public ResponseEntity<ErrorMessage> noSuchElementExceptionHandler(NoSuchElementException ex,
 			WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
 				.statusCode(HttpStatus.UNAUTHORIZED.value()).message(ex.getMessage())
