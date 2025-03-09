@@ -1,8 +1,12 @@
 package com.website.blogapp.service.impl;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -27,7 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Override
 	public UserDto signup(UserDto userDto) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -43,10 +47,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				userEmail, userPassword);
 		authenticationManager.authenticate(usernamePasswordAuthenticationToken); // BadCreadentialException
 		UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+		System.out.println(userDetails);
+
 		String jwtToken = jwtService.generateToken(userDetails);
 		Long jwtExpirationTime = jwtService.getExpirationTime();
+		Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+				.collect(Collectors.toSet());
+
 		LoginResponseDto loginResponseDto = LoginResponseDto.builder().userEmail(userEmail).jwtToken(jwtToken)
-				.jwtTokenExpiresIn(jwtExpirationTime).build();
+				.jwtTokenExpiresIn(jwtExpirationTime).roles(roles).build();
+
 		return loginResponseDto;
 
 	}

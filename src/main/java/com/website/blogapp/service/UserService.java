@@ -7,6 +7,8 @@ import com.website.blogapp.payload.UserDto;
 
 public interface UserService {
 
+	public UserDto registerNewUser(UserDto userDto);
+
 	public List<UserDto> getAllUser();
 
 	public UserDto getSingleUser(Integer userId);
@@ -18,7 +20,7 @@ public interface UserService {
 	public ApiResponse deleteUser(Integer userId);
 
 	public ApiResponse deleteAllUser();
-	
+
 	public List<UserDto> searchUsersStartingWith(String userName);
 
 }

@@ -4,15 +4,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.website.blogapp.constants.RoleConstant;
 import com.website.blogapp.constants.UserConstant;
+import com.website.blogapp.entity.Role;
 import com.website.blogapp.entity.User;
 import com.website.blogapp.exception.UserDatabaseIsEmptyException;
 import com.website.blogapp.exception.UserNotFoundException;
 import com.website.blogapp.mapper.UserMapper;
 import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.UserDto;
+import com.website.blogapp.repository.RoleRepository;
 import com.website.blogapp.repository.UserRepository;
 import com.website.blogapp.service.UserService;
 
@@ -24,6 +28,12 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserMapper userMapper;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private RoleRepository roleRepository;
 
 	@Override
 	public List<UserDto> getAllUser() {
@@ -111,6 +121,21 @@ public class UserServiceImpl implements UserService {
 		List<UserDto> userDto = users.stream().map((user) -> userMapper.userToDto(user)).collect(Collectors.toList());
 		return userDto;
 
+	}
+
+	@Override
+	public UserDto registerNewUser(UserDto userDto) {
+
+		User user = userMapper.dtoToUser(userDto);
+		String encodedPassword = passwordEncoder.encode(user.getPassword());
+		user.setUserPassword(encodedPassword);
+		Role role = roleRepository.findById(RoleConstant.ROLE_NORMAL).get();
+		user.getRoles().add(role);
+		userRepository.save(user);
+
+		UserDto registeredUserDto = userMapper.userToDto(user);
+
+		return registeredUserDto;
 	}
 
 }

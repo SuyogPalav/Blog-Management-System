@@ -10,14 +10,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.website.blogapp.payload.LoginRequestDto;
 import com.website.blogapp.payload.LoginResponseDto;
+import com.website.blogapp.payload.UserDto;
 import com.website.blogapp.service.AuthenticationService;
+import com.website.blogapp.service.UserService;
 
 @RestController
 @RequestMapping("/api/auth/")
 public class AuthenticationController {
 
 	@Autowired
+	private UserService userService;
+
+	@Autowired
 	private AuthenticationService authenticationService;
+
+	@PostMapping("/signup")
+	public ResponseEntity<UserDto> registerNewUser(@RequestBody UserDto userDto) {
+		UserDto registeredUserDto = userService.registerNewUser(userDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(registeredUserDto);
+
+	}
 
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponseDto> loginUser(@RequestBody LoginRequestDto loginRequestDto) {

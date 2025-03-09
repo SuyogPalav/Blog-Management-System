@@ -1,5 +1,8 @@
 package com.website.blogapp.payload;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -33,4 +36,7 @@ public class UserDto {
 
 	@NotBlank(message = "About cannot be blank")
 	private String userAbout;
+	
+	private Set<RoleDto> roles = new HashSet<>();
+
 }
