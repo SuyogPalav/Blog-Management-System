@@ -12,6 +12,8 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -124,10 +126,10 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorMessage> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException ex,
 			WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
-				.statusCode(HttpStatus.NOT_FOUND.value()).message("Required request body is missing")
+				.statusCode(HttpStatus.BAD_REQUEST.value()).message("Required request body is missing")
 				.description(webRequest.getDescription(false)).success(false).build();
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
 
 	}
 
@@ -166,10 +168,10 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorMessage> illegalArgumentExceptionHandler(IllegalArgumentException ex,
 			WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
-				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.statusCode(HttpStatus.BAD_REQUEST.value()).message(ex.getMessage())
 				.description(webRequest.getDescription(false)).success(false).build();
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
 
 	}
 
@@ -244,11 +246,32 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(FileAlreadyExistsException.class)
 	public ResponseEntity<ErrorMessage> fileAlreadyExistsExceptionHandler(FileAlreadyExistsException ex,
 			WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date()).statusCode(HttpStatus.CONFLICT.value())
+				.message(ex.getMessage()).description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
+
+	}
+
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<ErrorMessage> badCredentialsExceptionHandler(BadCredentialsException ex,
+			WebRequest webRequest) {
 		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
-				.statusCode(HttpStatus.NOT_FOUND.value()).message(ex.getMessage())
+				.statusCode(HttpStatus.UNAUTHORIZED.value()).message(ex.getMessage())
 				.description(webRequest.getDescription(false)).success(false).build();
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
+
+	}
+
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<ErrorMessage> authenticationExceptionHandler(AuthenticationException ex,
+			WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.UNAUTHORIZED.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
 
 	}
 
