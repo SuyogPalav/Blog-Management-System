@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.website.blogapp.payload.LoginRequestDto;
 import com.website.blogapp.payload.LoginResponseDto;
-import com.website.blogapp.payload.UserDto;
 import com.website.blogapp.service.AuthenticationService;
 import com.website.blogapp.service.JwtService;
 
@@ -28,12 +27,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Autowired
 	private JwtService jwtService;
-
-	@Override
-	public UserDto signup(UserDto userDto) {
-
-		return null;
-	}
 
 	@Override
 	public LoginResponseDto loginAuthentication(LoginRequestDto loginRequestDto) {
