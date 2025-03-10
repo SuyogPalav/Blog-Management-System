@@ -1,6 +1,7 @@
 package com.website.blogapp.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import com.website.blogapp.constants.RoleConstant;
 import com.website.blogapp.constants.UserConstant;
 import com.website.blogapp.entity.Role;
 import com.website.blogapp.entity.User;
+import com.website.blogapp.exception.DuplicateUserEmailFoundException;
 import com.website.blogapp.exception.UserDatabaseIsEmptyException;
 import com.website.blogapp.exception.UserNotFoundException;
 import com.website.blogapp.mapper.UserMapper;
@@ -125,17 +127,24 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto registerNewUser(UserDto userDto) {
-
 		User user = userMapper.dtoToUser(userDto);
-		String encodedPassword = passwordEncoder.encode(user.getPassword());
-		user.setUserPassword(encodedPassword);
-		Role role = roleRepository.findById(RoleConstant.ROLE_NORMAL).get();
-		user.getRoles().add(role);
-		userRepository.save(user);
 
-		UserDto registeredUserDto = userMapper.userToDto(user);
+		Optional<User> userData = userRepository.findByUserEmail(user.getUserEmail());
 
-		return registeredUserDto;
+		if (userData.isPresent()) {
+			throw new DuplicateUserEmailFoundException(
+					"This email is already exist! Please Sign Up with another email!");
+		} else {
+			String encodedPassword = passwordEncoder.encode(user.getPassword());
+			user.setUserPassword(encodedPassword);
+			Role role = roleRepository.findById(RoleConstant.ROLE_NORMAL).get();
+			user.getRoles().add(role);
+			userRepository.save(user);
+
+			UserDto registeredUserDto = userMapper.userToDto(user);
+
+			return registeredUserDto;
+		}
 	}
 
 }

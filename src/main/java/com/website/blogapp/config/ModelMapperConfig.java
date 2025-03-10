@@ -10,35 +10,9 @@ public class ModelMapperConfig {
 	@Bean
 	public ModelMapper modelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setFieldMatchingEnabled(true)
+				.setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
 		return modelMapper;
 
-		/*
-		// Ignore id when mapping from UserDto -> User
-		modelMapper.addMappings(new PropertyMap<UserDto, User>() {
-			@Override
-			protected void configure() {
-				skip(destination.getUserId());
-			}
-		});
-
-		// Ignore id when mapping from CategoryDto -> Category
-		modelMapper.addMappings(new PropertyMap<CategoryDto, Category>() {
-			@Override
-			protected void configure() {
-				skip(destination.getCategoryId());
-			}
-		});
-
-		// Ignore id when mapping from PostDto -> Post
-		modelMapper.addMappings(new PropertyMap<PostDto, Post>() {
-			@Override
-			protected void configure() {
-				skip(destination.getPostId());
-			}
-		});
-
-		return modelMapper;
-		*/
-		
 	}
 }

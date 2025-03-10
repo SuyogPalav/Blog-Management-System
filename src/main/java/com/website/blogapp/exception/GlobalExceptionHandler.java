@@ -321,4 +321,24 @@ public class GlobalExceptionHandler {
 
 	}
 
+	@ExceptionHandler(InterruptedException.class)
+	public ResponseEntity<ErrorMessage> interruptedExceptionHandler(InterruptedException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).message(ex.getMessage())
+				.description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+
+	}
+
+	@ExceptionHandler(DuplicateUserEmailFoundException.class)
+	public ResponseEntity<ErrorMessage> duplicateUserEmailFoundExceptionHandler(DuplicateUserEmailFoundException ex,
+			WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date()).statusCode(HttpStatus.CONFLICT.value())
+				.message(ex.getMessage()).description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
+
+	}
+
 }
