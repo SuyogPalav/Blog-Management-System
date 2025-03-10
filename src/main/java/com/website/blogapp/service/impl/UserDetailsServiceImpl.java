@@ -22,8 +22,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			throw new UserDatabaseIsEmptyException("No users found in the database.");
 		}
 
-		User user = userRepository.findByUserEmail(userEmail)
-				.orElseThrow(() -> new UserNotFoundException("User " + userEmail + " does not exist! Please Sign up for account!"));
+		User user = userRepository.findByUserEmail(userEmail);
+
+		if (user == null) {
+			throw new UserNotFoundException("User " + userEmail + " does not exist! Please Sign up for account!");
+		}
+
+//		User user = userRepository.findByUserEmail(userEmail)
+//				.orElseThrow(() -> new UserNotFoundException("User " + userEmail + " does not exist! Please Sign up for account!"));
 
 		return user;
 

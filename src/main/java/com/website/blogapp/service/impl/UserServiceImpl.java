@@ -1,7 +1,6 @@
 package com.website.blogapp.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,9 +128,9 @@ public class UserServiceImpl implements UserService {
 	public UserDto registerNewUser(UserDto userDto) {
 		User user = userMapper.dtoToUser(userDto);
 
-		Optional<User> userData = userRepository.findByUserEmail(user.getUserEmail());
+		User userData = userRepository.findByUserEmail(user.getUserEmail());
 
-		if (userData.isPresent()) {
+		if (userData!=null) {
 			throw new DuplicateUserEmailFoundException(
 					"This email is already exist! Please Sign Up with another email!");
 		} else {
