@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.website.blogapp.constants.AdminRoleConstant;
 import com.website.blogapp.constants.RoleConstant;
 import com.website.blogapp.entity.Role;
 import com.website.blogapp.entity.User;
@@ -46,15 +47,15 @@ public class PostConstructInitializer {
 
 	@PostConstruct
 	public void adminInitialization() {
-		User user = userRepository.findByUserEmail("suyog@admin.com");
+		User user = userRepository.findByUserEmail(AdminRoleConstant.ADMIN_EMAIL);
 
 		if (user == null) {
 			User adminUser = new User();
-			adminUser.setUserName("Suyog");
-			adminUser.setUserEmail("suyog@admin.com");
-			String encodedPassword = passwordEncoder.encode("admin@123");
+			adminUser.setUserName(AdminRoleConstant.ADMIN_NAME);
+			adminUser.setUserEmail(AdminRoleConstant.ADMIN_EMAIL);
+			String encodedPassword = passwordEncoder.encode(AdminRoleConstant.ADMIN_PASSWORD);
 			adminUser.setUserPassword(encodedPassword);
-			adminUser.setUserAbout("I am the Admin!");
+			adminUser.setUserAbout(AdminRoleConstant.ADMIN_ABOUT);
 			Role role = roleRepository.findById(RoleConstant.ROLE_ADMIN)
 					.orElseThrow(() -> new AdminRoleNotFoundException("Admin role not found!"));
 			adminUser.getRoles().add(role);
