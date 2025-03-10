@@ -19,10 +19,12 @@ import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.UserDto;
 import com.website.blogapp.service.UserService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user/")
+@Tag(name = "User Controller", description = "REST APIs related to perform User operations!!")
 public class UserController {
 	@Autowired
 	UserService userService;
@@ -58,7 +60,8 @@ public class UserController {
 		ApiResponse apiResponse = userService.deleteUser(userId);
 		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
-
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/deleteAll")
 	public ResponseEntity<ApiResponse> deleteAllUser() {
 		ApiResponse apiResponse = userService.deleteAllUser();
