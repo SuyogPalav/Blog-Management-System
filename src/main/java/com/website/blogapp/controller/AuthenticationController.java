@@ -14,8 +14,11 @@ import com.website.blogapp.payload.UserDto;
 import com.website.blogapp.service.AuthenticationService;
 import com.website.blogapp.service.UserService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/auth/")
+@Tag(name = "Authentication Controller", description = "REST APIs related to perform Authentication operations!!")
 public class AuthenticationController {
 
 	@Autowired
@@ -31,7 +34,7 @@ public class AuthenticationController {
 
 	}
 
-	@PostMapping("/login")
+	@PostMapping("/login/user")
 	public ResponseEntity<LoginResponseDto> loginUser(@RequestBody LoginRequestDto loginRequestDto) {
 		LoginResponseDto loginResponseDto = authenticationService.loginAuthentication(loginRequestDto);
 		return ResponseEntity.status(HttpStatus.OK).body(loginResponseDto);

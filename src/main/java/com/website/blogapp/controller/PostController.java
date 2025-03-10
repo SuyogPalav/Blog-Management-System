@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +31,13 @@ import com.website.blogapp.payload.PostDto;
 import com.website.blogapp.service.FileService;
 import com.website.blogapp.service.PostService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Post Controller", description = "REST APIs related to perform Post operations!!")
 public class PostController {
 	@Autowired
 	private PostService postService;
@@ -79,12 +82,14 @@ public class PostController {
 		return ResponseEntity.status(HttpStatus.OK).body(postDtoUpdated);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/post/deleteSingle/{postId}")
 	public ResponseEntity<ApiResponse> deletePost(@PathVariable("postId") Integer postId) {
 		ApiResponse apiResponse = postService.deletePost(postId);
 		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/post/deleteAll")
 	public ResponseEntity<ApiResponse> deleteAllPost() {
 		ApiResponse apiResponse = postService.deleteAllPost();

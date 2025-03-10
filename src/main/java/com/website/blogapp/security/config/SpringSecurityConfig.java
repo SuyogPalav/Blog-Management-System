@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.website.blogapp.constants.ApiEndpointsConstant;
 import com.website.blogapp.security.jwt.JwtAuthenticationEntryPoint;
 import com.website.blogapp.security.jwt.JwtAuthenticationFilter;
 
@@ -26,7 +27,7 @@ public class SpringSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+				.authorizeHttpRequests(auth -> auth.requestMatchers(ApiEndpointsConstant.PUBLIC_URLS).permitAll()
 						.requestMatchers("/api/user/**").authenticated()
 						.requestMatchers("/api/category/**").authenticated()
 						.requestMatchers("/api/comment/**").authenticated()

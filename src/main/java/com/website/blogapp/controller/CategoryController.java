@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,10 +22,12 @@ import com.website.blogapp.payload.CategoryContentResponse;
 import com.website.blogapp.payload.CategoryDto;
 import com.website.blogapp.service.CategoryService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/category/")
+@Tag(name = "Category Controller", description = "REST APIs related to perform Category operations!!")
 public class CategoryController {
 
 	@Autowired
@@ -63,6 +66,7 @@ public class CategoryController {
 
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/deleteSingle/{categoryId}")
 	public ResponseEntity<ApiResponse> deleteCategory(@PathVariable("categoryId") Integer categoryId) {
 		ApiResponse apiResponse = categoryService.deleteCategory(categoryId);
@@ -70,6 +74,7 @@ public class CategoryController {
 
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/deleteAll")
 	public ResponseEntity<ApiResponse> deleteAllCategory() {
 		ApiResponse apiResponse = categoryService.deleteAllCategory();
