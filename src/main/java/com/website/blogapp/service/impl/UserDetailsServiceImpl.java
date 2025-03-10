@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		}
 
 		User user = userRepository.findByUserEmail(userEmail)
-				.orElseThrow(() -> new UserNotFoundException("User " + userEmail + " does not exist."));
+				.orElseThrow(() -> new UserNotFoundException("User " + userEmail + " does not exist! Please Sign up for account!"));
 
 		return user;
 

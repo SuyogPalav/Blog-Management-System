@@ -40,14 +40,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		String userEmail = loginRequestDto.getUserEmail();
 		String userPassword = loginRequestDto.getUserPassword();
 
-		System.out.println(userEmail);
-		System.out.println(userPassword);
-
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 				userEmail, userPassword);
-		authenticationManager.authenticate(usernamePasswordAuthenticationToken); // BadCreadentialException
+		authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 		UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-		System.out.println(userDetails);
 
 		String jwtToken = jwtService.generateToken(userDetails);
 		Long jwtExpirationTime = jwtService.getExpirationTime();
