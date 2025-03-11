@@ -23,6 +23,7 @@ import com.website.blogapp.entity.User;
 import com.website.blogapp.exception.CategoryNotFoundException;
 import com.website.blogapp.exception.PostDatabaseIsEmptyException;
 import com.website.blogapp.exception.PostNotFoundException;
+import com.website.blogapp.exception.UserDatabaseIsEmptyException;
 import com.website.blogapp.exception.UserNotFoundException;
 import com.website.blogapp.mapper.PostMapper;
 import com.website.blogapp.payload.ApiResponse;
@@ -95,10 +96,17 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId, MultipartFile postImageFile)
+	public PostDto createPost(PostDto postDto, String userEmail, Integer categoryId, MultipartFile postImageFile)
 			throws IOException {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new UserNotFoundException("User " + userId + " does not exist."));
+		if (userRepository.count() == 0) {
+			throw new UserDatabaseIsEmptyException("No users found in the database.");
+		}
+		
+		User user = userRepository.findByUserEmail(userEmail);
+		
+		if (user == null) {
+			throw new UserNotFoundException("User " + userEmail + " does not exist.");
+		}
 
 		Category category = categoryRepository.findById(categoryId)
 				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
