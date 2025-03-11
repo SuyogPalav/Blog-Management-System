@@ -20,6 +20,7 @@ import com.website.blogapp.constants.CategoryConstant;
 import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.CategoryContentResponse;
 import com.website.blogapp.payload.CategoryDto;
+import com.website.blogapp.payload.CategoryResponseDto;
 import com.website.blogapp.service.CategoryService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,23 +47,23 @@ public class CategoryController {
 	}
 
 	@GetMapping("/readSingle/{categoryId}")
-	public ResponseEntity<CategoryDto> getSingleCategory(@PathVariable("categoryId") Integer categoryId) {
-		CategoryDto categoryDto = categoryService.getSingleCategory(categoryId);
-		return ResponseEntity.status(HttpStatus.OK).body(categoryDto);
+	public ResponseEntity<CategoryResponseDto> getSingleCategory(@PathVariable("categoryId") Integer categoryId) {
+		CategoryResponseDto categoryResponseDto = categoryService.getSingleCategory(categoryId);
+		return ResponseEntity.status(HttpStatus.OK).body(categoryResponseDto);
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
-		CategoryDto categoryDtoCreated = categoryService.createCategory(categoryDto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(categoryDtoCreated);
+	public ResponseEntity<CategoryResponseDto> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
+		CategoryResponseDto categoryResponseDto = categoryService.createCategory(categoryDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(categoryResponseDto);
 
 	}
 
 	@PutMapping("/updateSingle/{categoryId}")
-	public ResponseEntity<CategoryDto> updateCategory(@PathVariable("categoryId") Integer categoryId,
+	public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable("categoryId") Integer categoryId,
 			@Valid @RequestBody CategoryDto categoryDto) {
-		CategoryDto categoryDtoUpdated = categoryService.updateCategory(categoryId, categoryDto);
-		return ResponseEntity.status(HttpStatus.OK).body(categoryDtoUpdated);
+		CategoryResponseDto categoryResponseDto = categoryService.updateCategory(categoryId, categoryDto);
+		return ResponseEntity.status(HttpStatus.OK).body(categoryResponseDto);
 
 	}
 
@@ -82,10 +83,10 @@ public class CategoryController {
 	}
 
 	@GetMapping("/searchByTitle/{categoryTitle}")
-	public ResponseEntity<List<CategoryDto>> searchCategoryWithTitle(
+	public ResponseEntity<List<CategoryResponseDto>> searchCategoryWithTitle(
 			@PathVariable("categoryTitle") String categoryTitle) {
-		List<CategoryDto> categoryDto = categoryService.searchCategoryWithTitle(categoryTitle);
-		return ResponseEntity.status(HttpStatus.OK).body(categoryDto);
+		List<CategoryResponseDto> categoryResponseDto = categoryService.searchCategoryWithTitle(categoryTitle);
+		return ResponseEntity.status(HttpStatus.OK).body(categoryResponseDto);
 	}
 
 }

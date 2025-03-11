@@ -36,18 +36,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private RoleRepository roleRepository;
-
-//	@Override
-//	public List<UserDto> getAllUser() {
-//		if (userRepository.count() == 0) {
-//			throw new UserDatabaseIsEmptyException("No users found in the database.");
-//		}
-//
-//		List<User> user = userRepository.findAll();
-//		List<UserDto> userDto = user.stream().map(userMapper::userToDto).toList();
-//		return userDto;
-//
-//	}
 	
 	@Override
 	public List<UserResponseDto> getAllUser() {
@@ -95,7 +83,6 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(existingUser);
 		UserResponseDto userResponseDto = userMapper.userToResponseDto(existingUser);
 		return userResponseDto;
-
 	}
 
 	@Override

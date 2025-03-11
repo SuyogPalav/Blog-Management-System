@@ -29,6 +29,7 @@ import com.website.blogapp.mapper.PostMapper;
 import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.PostContentResponse;
 import com.website.blogapp.payload.PostDto;
+import com.website.blogapp.payload.PostResponseDto;
 import com.website.blogapp.repository.CategoryRepository;
 import com.website.blogapp.repository.PostCriteriaRepository;
 import com.website.blogapp.repository.PostRepository;
@@ -75,10 +76,10 @@ public class PostServiceImpl implements PostService {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 		Page<Post> page = postRepository.findAll(pageable);
 		List<Post> postPageContent = page.getContent();
-		List<PostDto> postDtoPageContent = postPageContent.stream().map((post) -> postMapper.postToDto(post))
+		List<PostResponseDto> postResponseDto = postPageContent.stream().map((post) -> postMapper.postToResponseDto(post))
 				.collect(Collectors.toList());
 
-		PostContentResponse postContentResponse = PostContentResponse.builder().postDtoPageContent(postDtoPageContent)
+		PostContentResponse postContentResponse = PostContentResponse.builder().postResponseDtoPageContent(postResponseDto)
 				.pageNumber(page.getNumber()).pageSize(page.getSize()).totalElements(page.getTotalElements())
 				.totalPages(page.getTotalPages()).lastPage(page.isLast()).build();
 
@@ -86,24 +87,24 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public PostDto getSinglePost(Integer postId) {
+	public PostResponseDto getSinglePost(Integer postId) {
 		if (postRepository.count() == 0) {
 			throw new PostDatabaseIsEmptyException("No posts found in the database.");
 		}
 
-		return postRepository.findById(postId).map(postMapper::postToDto)
+		return postRepository.findById(postId).map(postMapper::postToResponseDto)
 				.orElseThrow(() -> new PostNotFoundException("Post " + postId + " does not exist."));
 	}
 
 	@Override
-	public PostDto createPost(PostDto postDto, String userEmail, Integer categoryId, MultipartFile postImageFile)
+	public PostResponseDto createPost(PostDto postDto, String userEmail, Integer categoryId, MultipartFile postImageFile)
 			throws IOException {
 		if (userRepository.count() == 0) {
 			throw new UserDatabaseIsEmptyException("No users found in the database.");
 		}
-		
+
 		User user = userRepository.findByUserEmail(userEmail);
-		
+
 		if (user == null) {
 			throw new UserNotFoundException("User " + userEmail + " does not exist.");
 		}
@@ -128,23 +129,28 @@ public class PostServiceImpl implements PostService {
 		}
 
 		postRepository.save(post);
-		PostDto postDtoCreated = postMapper.postToDto(post);
-		return postDtoCreated;
+		PostResponseDto postResponseDto = postMapper.postToResponseDto(post);
+		return postResponseDto;
 	}
 
 	@Override
-	public PostDto updatePost(Integer postId, PostDto postDto, MultipartFile postImageFile) throws IOException {
+	public PostResponseDto updatePost(Integer postId, PostDto postDto, MultipartFile postImageFile) throws IOException {
 		Post existingPost = postRepository.findById(postId)
 				.orElseThrow(() -> new PostNotFoundException("Post " + postId + " does not exist."));
 
 		existingPost.setPostTitle(postDto.getPostTitle());
 		existingPost.setPostContent(postDto.getPostContent());
-		String fileName = fileService.uploadImage(path, postImageFile);
-		existingPost.setPostImageName(fileName);
+
+		if (postImageFile == null) {
+			existingPost.setPostImageName(null);
+		} else {
+			String fileName = fileService.uploadImage(path, postImageFile);
+			existingPost.setPostImageName(fileName);
+		}
 
 		postRepository.save(existingPost);
-		PostDto postDtoUpdated = postMapper.postToDto(existingPost);
-		return postDtoUpdated;
+		PostResponseDto postResponseDto = postMapper.postToResponseDto(existingPost);
+		return postResponseDto;
 
 	}
 
@@ -179,7 +185,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> getPostByCategory(Integer categoryId) {
+	public List<PostResponseDto> getPostByCategory(Integer categoryId) {
 		Category category = categoryRepository.findById(categoryId)
 				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
 
@@ -189,12 +195,12 @@ public class PostServiceImpl implements PostService {
 			throw new PostNotFoundException("Category " + categoryId + " does not have any post.");
 		}
 
-		List<PostDto> postDto = posts.stream().map((post) -> postMapper.postToDto(post)).collect(Collectors.toList());
-		return postDto;
+		List<PostResponseDto> postResponseDto = posts.stream().map((post) -> postMapper.postToResponseDto(post)).collect(Collectors.toList());
+		return postResponseDto;
 	}
 
 	@Override
-	public List<PostDto> getPostByUser(Integer userId) {
+	public List<PostResponseDto> getPostByUser(Integer userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new UserNotFoundException("User " + userId + " does not exist."));
 
@@ -204,23 +210,23 @@ public class PostServiceImpl implements PostService {
 			throw new PostNotFoundException("User " + userId + " does not have any post.");
 		}
 
-		List<PostDto> postDto = posts.stream().map((post) -> postMapper.postToDto(post)).collect(Collectors.toList());
-		return postDto;
+		List<PostResponseDto> postResponseDto = posts.stream().map((post) -> postMapper.postToResponseDto(post)).collect(Collectors.toList());
+		return postResponseDto;
 	}
 
 	@Override
-	public List<PostDto> searchPostByTitle(String keywords) {
+	public List<PostResponseDto> searchPostByTitle(String keywords) {
 		List<Post> posts = postRepository.findByPostTitleContaining(keywords);
 		if (posts.isEmpty()) {
 			throw new PostNotFoundException("Kindly search with another keywords");
 		}
 
-		List<PostDto> postDto = posts.stream().map((post) -> postMapper.postToDto(post)).collect(Collectors.toList());
-		return postDto;
+		List<PostResponseDto> postResponseDto = posts.stream().map((post) -> postMapper.postToResponseDto(post)).collect(Collectors.toList());
+		return postResponseDto;
 	}
 
 	@Override
-	public List<PostDto> findPostByTitleAndCategory(Integer categoryId, String postTitle) {
+	public List<PostResponseDto> findPostByTitleAndCategory(Integer categoryId, String postTitle) {
 		categoryRepository.findById(categoryId)
 				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
 
@@ -229,19 +235,19 @@ public class PostServiceImpl implements PostService {
 		if (posts.isEmpty()) {
 			throw new PostNotFoundException("Post title is not present in given category: " + categoryId);
 		}
-		List<PostDto> postDto = posts.stream().map((post) -> postMapper.postToDto(post)).collect(Collectors.toList());
-		return postDto;
+		List<PostResponseDto> postResponseDto = posts.stream().map((post) -> postMapper.postToResponseDto(post)).collect(Collectors.toList());
+		return postResponseDto;
 	}
 
 	@Override
 	public void exportPostInCsv(Integer userId, HttpServletResponse response) throws IOException {
-		List<PostDto> postDto = this.getPostByUser(userId);
+		List<PostResponseDto> postResponseDto = this.getPostByUser(userId);
 		String fileName = "User-" + userId + " Posts.csv";
 		response.setContentType("text/csv");
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "");
 
 		PrintWriter writer = response.getWriter();
-		CsvFileUtil.writePostToCsv(writer, postDto);
+		CsvFileUtil.writePostToCsv(writer, postResponseDto);
 	}
 
 }

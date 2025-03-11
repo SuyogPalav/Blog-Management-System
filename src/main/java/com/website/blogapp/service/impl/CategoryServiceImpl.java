@@ -18,6 +18,7 @@ import com.website.blogapp.mapper.CategoryMapper;
 import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.CategoryContentResponse;
 import com.website.blogapp.payload.CategoryDto;
+import com.website.blogapp.payload.CategoryResponseDto;
 import com.website.blogapp.repository.CategoryRepository;
 import com.website.blogapp.service.CategoryService;
 
@@ -42,11 +43,11 @@ public class CategoryServiceImpl implements CategoryService {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 		Page<Category> page = categoryRepository.findAll(pageable);
 		List<Category> categoryPageContent = page.getContent();
-		List<CategoryDto> categoryDtoPageContent = categoryPageContent.stream()
-				.map((category) -> categoryMapper.categoryToDto(category)).collect(Collectors.toList());
+		List<CategoryResponseDto> categoryResponseDto = categoryPageContent.stream()
+				.map((category) -> categoryMapper.categoryToResponseDto(category)).collect(Collectors.toList());
 
 		CategoryContentResponse categoryContentResponse = CategoryContentResponse.builder()
-				.categoryDtoPageContent(categoryDtoPageContent).pageNumber(page.getNumber()).pageSize(page.getSize())
+				.categoryDtoPageContent(categoryResponseDto).pageNumber(page.getNumber()).pageSize(page.getSize())
 				.totalElements(page.getTotalElements()).totalPages(page.getTotalPages()).lastPage(page.isLast())
 				.build();
 
@@ -55,25 +56,26 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public CategoryDto getSingleCategory(Integer categoryId) {
+	public CategoryResponseDto getSingleCategory(Integer categoryId) {
 		if (categoryRepository.count() == 0) {
 			throw new CategoryDatabaseIsEmptyException("No categories found in the database.");
 		}
-
-		return categoryRepository.findById(categoryId).map(categoryMapper::categoryToDto)
+		CategoryResponseDto categoryResponseDto =  categoryRepository.findById(categoryId).map(categoryMapper::categoryToResponseDto)
 				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
+
+		return categoryResponseDto;
 	}
 
 	@Override
-	public CategoryDto createCategory(CategoryDto categoryDto) {
+	public CategoryResponseDto createCategory(CategoryDto categoryDto) {
 		Category category = categoryMapper.dtoToCategory(categoryDto);
 		categoryRepository.save(category);
-		CategoryDto categoryDtoCreated = categoryMapper.categoryToDto(category);
-		return categoryDtoCreated;
+		CategoryResponseDto categoryResponseDto = categoryMapper.categoryToResponseDto(category);
+		return categoryResponseDto;
 	}
 
 	@Override
-	public CategoryDto updateCategory(Integer categoryId, CategoryDto categoryDto) {
+	public CategoryResponseDto updateCategory(Integer categoryId, CategoryDto categoryDto) {
 		Category existingCategory = categoryRepository.findById(categoryId)
 				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
 
@@ -81,8 +83,8 @@ public class CategoryServiceImpl implements CategoryService {
 		existingCategory.setCategoryDesc(categoryDto.getCategoryDesc());
 		categoryRepository.save(existingCategory);
 
-		CategoryDto categoryDtoUpdated = categoryMapper.categoryToDto(existingCategory);
-		return categoryDtoUpdated;
+		CategoryResponseDto categoryResponseDto = categoryMapper.categoryToResponseDto(existingCategory);
+		return categoryResponseDto;
 
 	}
 
@@ -119,15 +121,15 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<CategoryDto> searchCategoryWithTitle(String categoryTitle) {
+	public List<CategoryResponseDto> searchCategoryWithTitle(String categoryTitle) {
 		List<Category> categories = categoryRepository.searchByCategoryTitle(categoryTitle);
 		if (categories.isEmpty()) {
 			throw new CategoryNotFoundException("Category " + categoryTitle + " does not exist.");
 		}
 
-		List<CategoryDto> categoryDto = categories.stream().map((category) -> categoryMapper.categoryToDto(category))
+		List<CategoryResponseDto> categoryResponseDto = categories.stream().map((category) -> categoryMapper.categoryToResponseDto(category))
 				.collect(Collectors.toList());
-		return categoryDto;
+		return categoryResponseDto;
 
 	}
 
