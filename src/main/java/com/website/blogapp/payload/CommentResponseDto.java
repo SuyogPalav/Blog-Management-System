@@ -9,7 +9,5 @@ public class CommentResponseDto {
 	
 	private Integer commentId;
 	private String commentContent;
-//	private UserResponseDto user;
-	private String commentBy;
-	
+	private UserResponseDto user;	
 }

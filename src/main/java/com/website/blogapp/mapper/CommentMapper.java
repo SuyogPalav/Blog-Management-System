@@ -25,7 +25,6 @@ public class CommentMapper {
 	
 	public CommentResponseDto commentResponseDto(Comment comment) {
 		CommentResponseDto commentResponseDto = modelMapper.map(comment, CommentResponseDto.class);
-		commentResponseDto.setCommentBy(comment.getUser().getUserEmail());
 		return commentResponseDto;
 	}
 
