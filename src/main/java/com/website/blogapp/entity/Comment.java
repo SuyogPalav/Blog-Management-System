@@ -37,5 +37,5 @@ public class Comment {
 	@ManyToOne
 	@JoinColumn(name = "post_id", nullable = false)
 	private Post post;
-
+	
 }

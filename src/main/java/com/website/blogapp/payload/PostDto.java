@@ -35,7 +35,7 @@ public class PostDto {
 	
 	private CategoryDto category;	// keep this field name: category, otherwise it'll  create mapping error
 	
-	private UserDto user;			// keep this field name: user, otherwise it'll create mapping error
+	private UserResponseDto user;			// keep this field name: user, otherwise it'll create mapping error
 
 	private Set<CommentDto> comment = new HashSet<>();
 }
