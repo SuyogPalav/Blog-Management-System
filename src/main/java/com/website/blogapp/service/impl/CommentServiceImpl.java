@@ -33,19 +33,19 @@ public class CommentServiceImpl implements CommentService {
 	private UserRepository userRepository;
 
 	@Autowired
-	private PostServiceImpl postServiceImpl;
-
-	@Autowired
 	private CommentMapper commentMapper;
 
 	@Override
-	public CommentDto createComment(CommentDto commentDto, Integer userId, Integer postId) {
+	public CommentDto createComment(CommentDto commentDto, String userEmail, Integer postId) {
 		if (userRepository.count() == 0) {
 			throw new UserDatabaseIsEmptyException("No users found in the database.");
 		}
-
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new UserNotFoundException("User " + userId + " does not exist."));
+		
+		User user = userRepository.findByUserEmail(userEmail);
+		
+		if (user == null) {
+			throw new UserNotFoundException("User " + userEmail + " does not exist.");
+		}
 
 		if (postRepository.count() == 0) {
 			throw new PostDatabaseIsEmptyException("No posts found in the database.");
@@ -57,11 +57,11 @@ public class CommentServiceImpl implements CommentService {
 		Comment comment = commentMapper.dtoToComment(commentDto);
 		comment.setPost(post);
 		comment.setUser(user);
-
 		commentRepository.save(comment);
+		
 		CommentDto commentDtoCreated = commentMapper.commentToDto(comment);
+		
 		return commentDtoCreated;
-
 	}
 
 	@Override

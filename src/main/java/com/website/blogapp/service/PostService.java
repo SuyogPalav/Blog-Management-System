@@ -16,7 +16,7 @@ public interface PostService {
 
 	public PostDto getSinglePost(Integer postId);
 
-	public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId, MultipartFile postImageFile)
+	public PostDto createPost(PostDto postDto, String userEmail, Integer categoryId, MultipartFile postImageFile)
 			throws IOException;
 
 	public PostDto updatePost(Integer postId, PostDto postDto, MultipartFile postImageFile) throws IOException;

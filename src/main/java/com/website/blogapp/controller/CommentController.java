@@ -1,5 +1,7 @@
 package com.website.blogapp.controller;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +27,11 @@ public class CommentController {
 	@Autowired
 	private CommentService commentService;
 
-	@PostMapping("/create/user/{userId}/post/{postId}")
-	public ResponseEntity<CommentDto> createComment(@PathVariable("userId") Integer userId,
-			@PathVariable("postId") Integer postId, @Valid @RequestBody CommentDto commentDto) {
-		CommentDto commentDtoCreated = commentService.createComment(commentDto, userId, postId);
+	@PostMapping("/create/post/{postId}")
+	public ResponseEntity<CommentDto> createComment(@PathVariable("postId") Integer postId,
+			@Valid @RequestBody CommentDto commentDto, Principal principal) {
+		String userEmail = principal.getName();
+		CommentDto commentDtoCreated = commentService.createComment(commentDto, userEmail, postId);
 		return ResponseEntity.status(HttpStatus.CREATED).body(commentDtoCreated);
 
 	}

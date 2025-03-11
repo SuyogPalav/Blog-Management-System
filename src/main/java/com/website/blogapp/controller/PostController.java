@@ -3,6 +3,7 @@ package com.website.blogapp.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class PostController {
 
 	@Autowired
 	private FileService fileService;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -69,23 +70,27 @@ public class PostController {
 		return ResponseEntity.status(HttpStatus.OK).body(postDto);
 	}
 
-//	@PostMapping(value = "/create/user/{userId}/category/{categoryId}/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//	@PostMapping(value = "/create/user/{userId}/category/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //	public ResponseEntity<PostDto> createPost(@PathVariable("userId") Integer userId,
 //			@PathVariable("categoryId") Integer categoryId,
-//			@RequestPart("postDto") @Valid @ModelAttribute PostDto postDto,
-//			@RequestPart("postImageFile") MultipartFile postImageFile) throws IOException {
-//		PostDto postDtoCreated = postService.createPost(postDto, userId, categoryId, postImageFile);
+//			@RequestPart("postDto") @Valid String postDto,
+//			@RequestParam(value = "postImageFile", required = false) MultipartFile postImageFile) throws IOException {
+//		// Converting String into JSON
+//		PostDto postDtoInJson = objectMapper.readValue(postDto, PostDto.class);
+//		PostDto postDtoCreated = postService.createPost(postDtoInJson, userId, categoryId, postImageFile);
 //		return ResponseEntity.status(HttpStatus.CREATED).body(postDtoCreated);
 //	}
-	
-	@PostMapping(value = "/create/user/{userId}/category/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<PostDto> createPost(@PathVariable("userId") Integer userId,
-			@PathVariable("categoryId") Integer categoryId,
+
+	@PostMapping(value = "/create/category/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<PostDto> createPost(@PathVariable("categoryId") Integer categoryId,
 			@RequestPart("postDto") @Valid String postDto,
-			@RequestParam(value = "postImageFile", required = false) MultipartFile postImageFile) throws IOException {
+			@RequestParam(value = "postImageFile", required = false) MultipartFile postImageFile, Principal principal)
+			throws IOException {
+
 		// Converting String into JSON
 		PostDto postDtoInJson = objectMapper.readValue(postDto, PostDto.class);
-		PostDto postDtoCreated = postService.createPost(postDtoInJson, userId, categoryId, postImageFile);
+		String userEmail = principal.getName();
+		PostDto postDtoCreated = postService.createPost(postDtoInJson, userEmail, categoryId, postImageFile);
 		return ResponseEntity.status(HttpStatus.CREATED).body(postDtoCreated);
 	}
 
