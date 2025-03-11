@@ -4,23 +4,24 @@ import java.util.List;
 
 import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.UserDto;
+import com.website.blogapp.payload.UserResponseDto;
 
 public interface UserService {
 
-	public UserDto registerNewUser(UserDto userDto);
+	public UserResponseDto registerNewUser(UserDto userDto);
 
-	public List<UserDto> getAllUser();
+	public List<UserResponseDto> getAllUser();
 
-	public UserDto getSingleUser(Integer userId);
+	public UserResponseDto getSingleUser(Integer userId);
 
-	public UserDto createUser(UserDto userDto);
+	public UserResponseDto createUser(UserDto userDto);
 
-	public UserDto updateUser(Integer userId, UserDto userDto);
+	public UserResponseDto updateUser(Integer userId, UserDto userDto);
 
 	public ApiResponse deleteUser(Integer userId);
 
 	public ApiResponse deleteAllUser();
 
-	public List<UserDto> searchUsersStartingWith(String userName);
+	public List<UserResponseDto> searchUsersStartingWith(String userName);
 
 }

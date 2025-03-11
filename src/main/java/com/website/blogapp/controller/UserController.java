@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.UserDto;
+import com.website.blogapp.payload.UserResponseDto;
 import com.website.blogapp.service.UserService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,28 +31,28 @@ public class UserController {
 	UserService userService;
 
 	@GetMapping("/readAll")
-	public ResponseEntity<List<UserDto>> getAllUser() {
-		List<UserDto> userDtoAll = userService.getAllUser();
-		return ResponseEntity.status(HttpStatus.OK).body(userDtoAll);
+	public ResponseEntity<List<UserResponseDto>> getAllUser() {
+		List<UserResponseDto> userResponseDto = userService.getAllUser();
+		return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
 	}
 
 	@GetMapping("/readSingle/{userId}")
-	public ResponseEntity<UserDto> getSingleUser(@PathVariable("userId") Integer userId) {
-		UserDto userDto = userService.getSingleUser(userId);
-		return ResponseEntity.status(HttpStatus.OK).body(userDto);
+	public ResponseEntity<UserResponseDto> getSingleUser(@PathVariable("userId") Integer userId) {
+		UserResponseDto userResponseDto = userService.getSingleUser(userId);
+		return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
-		UserDto userDtoCreated = userService.createUser(userDto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(userDtoCreated);
+	public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserDto userDto) {
+		UserResponseDto userResponseDto = userService.createUser(userDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
 	}
 
 	@PutMapping("/updateSingle/{userId}")
-	public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Integer userId,
+	public ResponseEntity<UserResponseDto> updateUser(@PathVariable("userId") Integer userId,
 			@Valid @RequestBody UserDto userDto) {
-		UserDto userDtoUpdated = userService.updateUser(userId, userDto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(userDtoUpdated);
+		UserResponseDto userResponseDto = userService.updateUser(userId, userDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -69,8 +70,8 @@ public class UserController {
 	}
 
 	@GetMapping("/searchByName/{userName}")
-	public ResponseEntity<List<UserDto>> searchUsersStartingWith(@PathVariable("userName") String userName) {
-		List<UserDto> userDto = userService.searchUsersStartingWith(userName);
-		return ResponseEntity.status(HttpStatus.OK).body(userDto);
+	public ResponseEntity<List<UserResponseDto>> searchUsersStartingWith(@PathVariable("userName") String userName) {
+		List<UserResponseDto> userResponseDto = userService.searchUsersStartingWith(userName);
+		return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
 	}
 }
