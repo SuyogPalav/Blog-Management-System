@@ -61,7 +61,7 @@ public class UserController {
 		ApiResponse apiResponse = userService.deleteUser(userId);
 		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
-	
+
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/deleteAll")
 	public ResponseEntity<ApiResponse> deleteAllUser() {

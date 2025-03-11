@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.website.blogapp.entity.Category;
 import com.website.blogapp.payload.CategoryDto;
+import com.website.blogapp.payload.CategoryResponseDto;
 
 @Component
 public class CategoryMapper {
@@ -20,6 +21,11 @@ public class CategoryMapper {
 	public CategoryDto categoryToDto(Category category) {
 		CategoryDto categoryDto = categoryMapper.map(category, CategoryDto.class);
 		return categoryDto;
+	}
+	
+	public CategoryResponseDto categoryToResponseDto(Category category) {
+		CategoryResponseDto categoryResponseDto = categoryMapper.map(category, CategoryResponseDto.class);
+		return categoryResponseDto;
 	}
 
 }

@@ -1,9 +1,5 @@
 package com.website.blogapp.payload;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,7 +14,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class PostDto {
-	private Integer postId;
+//	private Integer postId;
 
 	@NotBlank(message = "Title cannot be blank")
 	@Size(min = 3, max = 50, message = "Title must be between 3 and 50 characters")
@@ -28,14 +24,14 @@ public class PostDto {
 	@Size(min = 3, max = 5000, message = "Content must be between 3 and 5000 characters")
 	private String postContent;
 
-//	@NotBlank(message = "Image name cannot be blank")
+	@NotBlank(message = "Image name cannot be blank")
 	private String postImageName;
-
-	private Date postCreatedDate;
-
-	private CategoryDto category; // keep this field name: category, otherwise it'll create mapping error
-
-	private UserResponseDto user; // keep this field name: user, otherwise it'll create mapping error
-
-	private List<CommentResponseDto> comment = new ArrayList<>();
+//
+//	private Date postCreatedDate;
+//
+//	private CategoryDto category; // keep this field name: category, otherwise it'll create mapping error
+//
+//	private UserResponseDto user; // keep this field name: user, otherwise it'll create mapping error
+//
+//	private List<CommentResponseDto> comment = new ArrayList<>();
 }

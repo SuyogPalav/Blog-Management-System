@@ -32,7 +32,7 @@ public class SwaggerConfig {
 						.title("Blog Management System")
 						.description("This is Blog Management System RESTful API - developed by Suyog Palav")
 						.version("v0.0.1")
-						.contact(new Contact().name("Suyog").url("https://github.com/SuyogPalav"))
+						.contact(new Contact().name("GitHub").url("https://github.com/SuyogPalav"))
 						.license(new License().name("Apache 2.0")))
 				
 				.externalDocs(new ExternalDocumentation()

@@ -15,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,12 +26,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.website.blogapp.constants.PostConstant;
+import com.website.blogapp.mapper.PostMapper;
 import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.PostContentResponse;
 import com.website.blogapp.payload.PostDto;
+import com.website.blogapp.payload.PostResponseDto;
 import com.website.blogapp.service.FileService;
 import com.website.blogapp.service.PostService;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -50,6 +52,9 @@ public class PostController {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Autowired
+	PostMapper postMapper;
+
 	@Value("${project.image}")
 	private String path;
 
@@ -65,41 +70,31 @@ public class PostController {
 	}
 
 	@GetMapping("/readSingle/{postId}")
-	public ResponseEntity<PostDto> getSinglePost(@PathVariable("postId") Integer postId) {
-		PostDto postDto = postService.getSinglePost(postId);
-		return ResponseEntity.status(HttpStatus.OK).body(postDto);
+	public ResponseEntity<PostResponseDto> getSinglePost(@PathVariable("postId") Integer postId) {
+		PostResponseDto postResponseDto = postService.getSinglePost(postId);
+		return ResponseEntity.status(HttpStatus.OK).body(postResponseDto);
 	}
 
-//	@PostMapping(value = "/create/user/{userId}/category/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//	public ResponseEntity<PostDto> createPost(@PathVariable("userId") Integer userId,
-//			@PathVariable("categoryId") Integer categoryId,
-//			@RequestPart("postDto") @Valid String postDto,
-//			@RequestParam(value = "postImageFile", required = false) MultipartFile postImageFile) throws IOException {
-//		// Converting String into JSON
-//		PostDto postDtoInJson = objectMapper.readValue(postDto, PostDto.class);
-//		PostDto postDtoCreated = postService.createPost(postDtoInJson, userId, categoryId, postImageFile);
-//		return ResponseEntity.status(HttpStatus.CREATED).body(postDtoCreated);
-//	}
-
 	@PostMapping(value = "/create/category/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<PostDto> createPost(@PathVariable("categoryId") Integer categoryId,
-			@RequestPart("postDto") @Valid String postDto,
-			@RequestParam(value = "postImageFile", required = false) MultipartFile postImageFile, Principal principal)
-			throws IOException {
-
+	public ResponseEntity<PostResponseDto> createPost(@PathVariable("categoryId") Integer categoryId,
+			@Parameter(description = "{ \"postTitle\": \"String\", \"postContent\": \"String\" }") @RequestPart("postDto") @Valid String postDto,
+			@Parameter(description = "Image file for the post (optional)") @RequestParam(value = "postImageFile", required = false) MultipartFile postImageFile,
+			Principal principal) throws IOException {
 		// Converting String into JSON
 		PostDto postDtoInJson = objectMapper.readValue(postDto, PostDto.class);
 		String userEmail = principal.getName();
-		PostDto postDtoCreated = postService.createPost(postDtoInJson, userEmail, categoryId, postImageFile);
-		return ResponseEntity.status(HttpStatus.CREATED).body(postDtoCreated);
+		PostResponseDto postResponseDto = postService.createPost(postDtoInJson, userEmail, categoryId, postImageFile);
+		return ResponseEntity.status(HttpStatus.CREATED).body(postResponseDto);
 	}
 
-	@PutMapping("/updateSingle/{postId}")
-	public ResponseEntity<PostDto> updatePost(@PathVariable("postId") Integer postId,
-			@RequestPart("postDto") @Valid @ModelAttribute PostDto postDto,
-			@RequestPart("postImageFile") MultipartFile postImageFile) throws IOException {
-		PostDto postDtoUpdated = postService.updatePost(postId, postDto, postImageFile);
-		return ResponseEntity.status(HttpStatus.OK).body(postDtoUpdated);
+	@PutMapping(value = "/updateSingle/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<PostResponseDto> updatePost(@PathVariable("postId") Integer postId,
+			@Parameter(description = "{ \"postTitle\": \"String\", \"postContent\": \"String\" }") @RequestPart("postDto") @Valid String postDto,
+			@Parameter(description = "Image file for the post (optional)") @RequestParam(value = "postImageFile", required = false) MultipartFile postImageFile)
+			throws IOException {
+		PostDto postDtoInJson = objectMapper.readValue(postDto, PostDto.class);
+		PostResponseDto postResponseDto = postService.updatePost(postId, postDtoInJson, postImageFile);
+		return ResponseEntity.status(HttpStatus.OK).body(postResponseDto);
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -117,39 +112,42 @@ public class PostController {
 	}
 
 	@GetMapping("/read/user/{userId}")
-	public ResponseEntity<List<PostDto>> getPostByUser(@PathVariable("userId") Integer userId) {
-		List<PostDto> postDto = postService.getPostByUser(userId);
-		return ResponseEntity.status(HttpStatus.OK).body(postDto);
+	public ResponseEntity<List<PostResponseDto>> getPostByUser(@PathVariable("userId") Integer userId) {
+		List<PostResponseDto> postResponseDto = postService.getPostByUser(userId);
+		return ResponseEntity.status(HttpStatus.OK).body(postResponseDto);
 
 	}
 
 	@GetMapping("/read/category/{categoryId}")
-	public ResponseEntity<List<PostDto>> getPostByCategory(@PathVariable("categoryId") Integer categoryId) {
-		List<PostDto> postDto = postService.getPostByCategory(categoryId);
-		return ResponseEntity.status(HttpStatus.OK).body(postDto);
+	public ResponseEntity<List<PostResponseDto>> getPostByCategory(@PathVariable("categoryId") Integer categoryId) {
+		List<PostResponseDto> postResponseDto = postService.getPostByCategory(categoryId);
+		return ResponseEntity.status(HttpStatus.OK).body(postResponseDto);
 
 	}
 
 	@GetMapping("/searchByTitle/{keywords}")
-	public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable("keywords") String keywords) {
-		List<PostDto> postDto = postService.searchPostByTitle(keywords);
-		return ResponseEntity.status(HttpStatus.OK).body(postDto);
+	public ResponseEntity<List<PostResponseDto>> searchPostByTitle(@PathVariable("keywords") String keywords) {
+		List<PostResponseDto> postResponseDto = postService.searchPostByTitle(keywords);
+		return ResponseEntity.status(HttpStatus.OK).body(postResponseDto);
 
 	}
 
 	// Image Upload
 	@PostMapping(value = "/image/upload/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<PostDto> uploadImage(@PathVariable("postId") Integer postId,
-			@RequestParam(value = "postImageFile", required = true) MultipartFile postImageFile
+	public ResponseEntity<PostResponseDto> uploadImage(@PathVariable("postId") Integer postId,
+			@Parameter(description = "Image file for the post (optional)") @RequestParam(value = "postImageFile", required = true) MultipartFile postImageFile
 
 	) throws IOException {
 
-		PostDto postDto = postService.getSinglePost(postId);
+		PostResponseDto postResponseDto = postService.getSinglePost(postId);
+		PostDto postDto = postMapper.postDtoToPostResponseDto(postResponseDto);
+
 		String randomImageFileName = fileService.uploadImage(path, postImageFile);
 		postDto.setPostImageName(randomImageFileName);
-		PostDto postDtoUpdated = postService.updatePost(postId, postDto, postImageFile);
 
-		return ResponseEntity.status(HttpStatus.OK).body(postDtoUpdated);
+		PostResponseDto postResponseDtoUpdated = postService.updatePost(postId, postDto, postImageFile);
+
+		return ResponseEntity.status(HttpStatus.OK).body(postResponseDtoUpdated);
 	}
 
 	// Image Download
@@ -163,10 +161,10 @@ public class PostController {
 	}
 
 	@GetMapping("/category/{categoryId}/postTitle/{postTitle}")
-	public ResponseEntity<List<PostDto>> findPostByTitleAndCategory(@PathVariable("categoryId") Integer categoryId,
-			@PathVariable("postTitle") String postTitle) {
-		List<PostDto> postDto = postService.findPostByTitleAndCategory(categoryId, postTitle);
-		return ResponseEntity.status(HttpStatus.OK).body(postDto);
+	public ResponseEntity<List<PostResponseDto>> findPostByTitleAndCategory(
+			@PathVariable("categoryId") Integer categoryId, @PathVariable("postTitle") String postTitle) {
+		List<PostResponseDto> postResponseDto = postService.findPostByTitleAndCategory(categoryId, postTitle);
+		return ResponseEntity.status(HttpStatus.OK).body(postResponseDto);
 	}
 
 	@GetMapping("/download/csv/user/{userId}")
