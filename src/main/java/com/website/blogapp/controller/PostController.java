@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.website.blogapp.constants.PostConstant;
 import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.PostContentResponse;
@@ -36,7 +37,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/post")
 @Tag(name = "Post Controller", description = "REST APIs related to perform Post operations!!")
 public class PostController {
 	@Autowired
@@ -44,11 +45,14 @@ public class PostController {
 
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Value("${project.image}")
 	private String path;
 
-	@GetMapping("/post/readAll")
+	@GetMapping("/readAll")
 	public ResponseEntity<PostContentResponse> getAllPost(
 			@RequestParam(value = "pageNumber", defaultValue = PostConstant.PAGE_NUMBER, required = false) Integer pageNumber,
 			@RequestParam(value = "pageSize", defaultValue = PostConstant.PAGE_SIZE, required = false) Integer pageSize,
@@ -59,22 +63,33 @@ public class PostController {
 		return ResponseEntity.status(HttpStatus.OK).body(postContentResponse);
 	}
 
-	@GetMapping("/post/readSingle/{postId}")
+	@GetMapping("/readSingle/{postId}")
 	public ResponseEntity<PostDto> getSinglePost(@PathVariable("postId") Integer postId) {
 		PostDto postDto = postService.getSinglePost(postId);
 		return ResponseEntity.status(HttpStatus.OK).body(postDto);
 	}
 
-	@PostMapping(value = "/create/user/{userId}/category/{categoryId}/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//	@PostMapping(value = "/create/user/{userId}/category/{categoryId}/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//	public ResponseEntity<PostDto> createPost(@PathVariable("userId") Integer userId,
+//			@PathVariable("categoryId") Integer categoryId,
+//			@RequestPart("postDto") @Valid @ModelAttribute PostDto postDto,
+//			@RequestPart("postImageFile") MultipartFile postImageFile) throws IOException {
+//		PostDto postDtoCreated = postService.createPost(postDto, userId, categoryId, postImageFile);
+//		return ResponseEntity.status(HttpStatus.CREATED).body(postDtoCreated);
+//	}
+	
+	@PostMapping(value = "/create/user/{userId}/category/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<PostDto> createPost(@PathVariable("userId") Integer userId,
 			@PathVariable("categoryId") Integer categoryId,
-			@RequestPart("postDto") @Valid @ModelAttribute PostDto postDto,
-			@RequestPart("postImageFile") MultipartFile postImageFile) throws IOException {
-		PostDto postDtoCreated = postService.createPost(postDto, userId, categoryId, postImageFile);
+			@RequestPart("postDto") @Valid String postDto,
+			@RequestParam(value = "postImageFile", required = false) MultipartFile postImageFile) throws IOException {
+		// Converting String into JSON
+		PostDto postDtoInJson = objectMapper.readValue(postDto, PostDto.class);
+		PostDto postDtoCreated = postService.createPost(postDtoInJson, userId, categoryId, postImageFile);
 		return ResponseEntity.status(HttpStatus.CREATED).body(postDtoCreated);
 	}
 
-	@PutMapping("/post/updateSingle/{postId}")
+	@PutMapping("/updateSingle/{postId}")
 	public ResponseEntity<PostDto> updatePost(@PathVariable("postId") Integer postId,
 			@RequestPart("postDto") @Valid @ModelAttribute PostDto postDto,
 			@RequestPart("postImageFile") MultipartFile postImageFile) throws IOException {
@@ -83,34 +98,34 @@ public class PostController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@DeleteMapping("/post/deleteSingle/{postId}")
+	@DeleteMapping("/deleteSingle/{postId}")
 	public ResponseEntity<ApiResponse> deletePost(@PathVariable("postId") Integer postId) {
 		ApiResponse apiResponse = postService.deletePost(postId);
 		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@DeleteMapping("/post/deleteAll")
+	@DeleteMapping("/deleteAll")
 	public ResponseEntity<ApiResponse> deleteAllPost() {
 		ApiResponse apiResponse = postService.deleteAllPost();
 		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 
-	@GetMapping("/read/user/{userId}/post")
+	@GetMapping("/read/user/{userId}")
 	public ResponseEntity<List<PostDto>> getPostByUser(@PathVariable("userId") Integer userId) {
 		List<PostDto> postDto = postService.getPostByUser(userId);
 		return ResponseEntity.status(HttpStatus.OK).body(postDto);
 
 	}
 
-	@GetMapping("/read/category/{categoryId}/post")
+	@GetMapping("/read/category/{categoryId}")
 	public ResponseEntity<List<PostDto>> getPostByCategory(@PathVariable("categoryId") Integer categoryId) {
 		List<PostDto> postDto = postService.getPostByCategory(categoryId);
 		return ResponseEntity.status(HttpStatus.OK).body(postDto);
 
 	}
 
-	@GetMapping("/post/searchByTitle/{keywords}")
+	@GetMapping("/searchByTitle/{keywords}")
 	public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable("keywords") String keywords) {
 		List<PostDto> postDto = postService.searchPostByTitle(keywords);
 		return ResponseEntity.status(HttpStatus.OK).body(postDto);
@@ -118,10 +133,11 @@ public class PostController {
 	}
 
 	// Image Upload
-	@PostMapping("/post/image/upload/{postId}")
-	public ResponseEntity<PostDto> uploadImage(
-			@RequestParam(value = "postImageFile", required = true) MultipartFile postImageFile,
-			@PathVariable("postId") Integer postId) throws IOException {
+	@PostMapping(value = "/image/upload/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<PostDto> uploadImage(@PathVariable("postId") Integer postId,
+			@RequestParam(value = "postImageFile", required = true) MultipartFile postImageFile
+
+	) throws IOException {
 
 		PostDto postDto = postService.getSinglePost(postId);
 		String randomImageFileName = fileService.uploadImage(path, postImageFile);
@@ -132,7 +148,7 @@ public class PostController {
 	}
 
 	// Image Download
-	@GetMapping(value = "/post/image/download/{postImageFile}", produces = MediaType.IMAGE_JPEG_VALUE)
+	@GetMapping(value = "/image/download/{postImageFile}", produces = MediaType.IMAGE_JPEG_VALUE)
 	public void downloadImage(@PathVariable("postImageFile") String postImageFile, HttpServletResponse response)
 			throws FileNotFoundException, IOException {
 		InputStream inputStream = fileService.downloadImage(path, postImageFile);
@@ -141,14 +157,14 @@ public class PostController {
 
 	}
 
-	@GetMapping("/post/category/{categoryId}/postTitle/{postTitle}")
+	@GetMapping("/category/{categoryId}/postTitle/{postTitle}")
 	public ResponseEntity<List<PostDto>> findPostByTitleAndCategory(@PathVariable("categoryId") Integer categoryId,
 			@PathVariable("postTitle") String postTitle) {
 		List<PostDto> postDto = postService.findPostByTitleAndCategory(categoryId, postTitle);
 		return ResponseEntity.status(HttpStatus.OK).body(postDto);
 	}
 
-	@GetMapping("/post/download/csv/user/{userId}")
+	@GetMapping("/download/csv/user/{userId}")
 	public void exportPostInCsv(@PathVariable("userId") Integer userId, HttpServletResponse response)
 			throws IOException {
 		postService.exportPostInCsv(userId, response);

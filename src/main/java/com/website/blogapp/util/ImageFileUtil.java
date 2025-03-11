@@ -48,7 +48,5 @@ public class ImageFileUtil {
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}
-
 	}
-
 }
