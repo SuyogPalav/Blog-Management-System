@@ -1,8 +1,8 @@
 package com.website.blogapp.payload;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -32,10 +32,10 @@ public class PostDto {
 	private String postImageName;
 
 	private Date postCreatedDate;
-	
-	private CategoryDto category;	// keep this field name: category, otherwise it'll  create mapping error
-	
-	private UserResponseDto user;			// keep this field name: user, otherwise it'll create mapping error
 
-	private Set<CommentDto> comment = new HashSet<>();
+	private CategoryDto category; // keep this field name: category, otherwise it'll create mapping error
+
+	private UserResponseDto user; // keep this field name: user, otherwise it'll create mapping error
+
+	private List<CommentResponseDto> comment = new ArrayList<>();
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.website.blogapp.entity.Comment;
 import com.website.blogapp.payload.CommentDto;
+import com.website.blogapp.payload.CommentResponseDto;
 
 @Component
 public class CommentMapper {
@@ -20,6 +21,12 @@ public class CommentMapper {
 	public CommentDto commentToDto(Comment comment) {
 		CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
 		return commentDto;
+	}
+	
+	public CommentResponseDto commentResponseDto(Comment comment) {
+		CommentResponseDto commentResponseDto = modelMapper.map(comment, CommentResponseDto.class);
+		commentResponseDto.setCommentBy(comment.getUser().getUserEmail());
+		return commentResponseDto;
 	}
 
 }
