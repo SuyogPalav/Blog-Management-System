@@ -31,6 +31,8 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -340,5 +342,16 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
 
 	}
+	
+	@ExceptionHandler(JsonParseException.class)
+	public ResponseEntity<ErrorMessage> jsonParseExceptionHandler(JsonParseException ex,
+			WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date()).statusCode(HttpStatus.BAD_REQUEST.value())
+				.message("Invalid JSON format in 'postDto'. Please provide a correctly formatted JSON string").description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+
+	}
+	
 
 }

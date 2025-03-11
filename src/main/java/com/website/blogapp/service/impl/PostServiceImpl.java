@@ -103,15 +103,21 @@ public class PostServiceImpl implements PostService {
 		Category category = categoryRepository.findById(categoryId)
 				.orElseThrow(() -> new CategoryNotFoundException("Category " + categoryId + " does not exist."));
 
-		String fileName = fileService.uploadImage(path, postImageFile);
 		Post post = postMapper.dtoToPost(postDto);
 
 //		post.setPostTitle(postDto.getPostTitle());
 //		post.setPostContent(postDto.getPostContent());
-		post.setPostImageName(fileName);
 		post.setPostCreatedDate(new Date());
 		post.setUser(user);
 		post.setCategory(category);
+
+		if (postImageFile == null) {
+			post.setPostImageName(null);
+		} else {
+			String fileName = fileService.uploadImage(path, postImageFile);
+			post.setPostImageName(fileName);
+
+		}
 
 		postRepository.save(post);
 		PostDto postDtoCreated = postMapper.postToDto(post);
@@ -225,7 +231,7 @@ public class PostServiceImpl implements PostService {
 		String fileName = "User-" + userId + " Posts.csv";
 		response.setContentType("text/csv");
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "");
-		
+
 		PrintWriter writer = response.getWriter();
 		CsvFileUtil.writePostToCsv(writer, postDto);
 	}
