@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.website.blogapp.entity.User;
 import com.website.blogapp.payload.UserDto;
+import com.website.blogapp.payload.UserResponseDto;
 
 @Component
 public class UserMapper {
@@ -23,4 +24,9 @@ public class UserMapper {
 		return userDto;
 	}
 
+	public UserResponseDto userToResponseDto(User user) {
+		UserResponseDto userResponseDto = userMapper.map(user, UserResponseDto.class);
+		return userResponseDto;
+	}
+	
 }

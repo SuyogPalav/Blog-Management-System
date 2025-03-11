@@ -17,6 +17,7 @@ import com.website.blogapp.exception.UserNotFoundException;
 import com.website.blogapp.mapper.UserMapper;
 import com.website.blogapp.payload.ApiResponse;
 import com.website.blogapp.payload.UserDto;
+import com.website.blogapp.payload.UserResponseDto;
 import com.website.blogapp.repository.RoleRepository;
 import com.website.blogapp.repository.UserRepository;
 import com.website.blogapp.service.UserService;
@@ -36,40 +37,52 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RoleRepository roleRepository;
 
+//	@Override
+//	public List<UserDto> getAllUser() {
+//		if (userRepository.count() == 0) {
+//			throw new UserDatabaseIsEmptyException("No users found in the database.");
+//		}
+//
+//		List<User> user = userRepository.findAll();
+//		List<UserDto> userDto = user.stream().map(userMapper::userToDto).toList();
+//		return userDto;
+//
+//	}
+	
 	@Override
-	public List<UserDto> getAllUser() {
+	public List<UserResponseDto> getAllUser() {
 		if (userRepository.count() == 0) {
 			throw new UserDatabaseIsEmptyException("No users found in the database.");
 		}
 
 		List<User> user = userRepository.findAll();
-		List<UserDto> userDto = user.stream().map(userMapper::userToDto).toList();
+		List<UserResponseDto> userDto = user.stream().map(userMapper::userToResponseDto).toList();
 		return userDto;
 
 	}
 
 	@Override
-	public UserDto getSingleUser(Integer userId) {
+	public UserResponseDto getSingleUser(Integer userId) {
 		if (userRepository.count() == 0) {
 			throw new UserDatabaseIsEmptyException("No users found in the database.");
 		}
 
-		UserDto userDto = userRepository.findById(userId).map(userMapper::userToDto)
+		UserResponseDto userResponseDto = userRepository.findById(userId).map(userMapper::userToResponseDto)
 				.orElseThrow(() -> new UserNotFoundException("User " + userId + " does not exist."));
 
-		return userDto;
+		return userResponseDto;
 	}
 
 	@Override
-	public UserDto createUser(UserDto userDto) {
+	public UserResponseDto createUser(UserDto userDto) {
 		User user = userMapper.dtoToUser(userDto);
 		userRepository.save(user);
-		UserDto userDtoCreated = userMapper.userToDto(user);
-		return userDtoCreated;
+		UserResponseDto userResponseDto = userMapper.userToResponseDto(user);
+		return userResponseDto;
 	}
 
 	@Override
-	public UserDto updateUser(Integer userId, UserDto userDto) {
+	public UserResponseDto updateUser(Integer userId, UserDto userDto) {
 		User existingUser = userRepository.findById(userId)
 				.orElseThrow(() -> new UserNotFoundException("User " + userId + " does not exist."));
 
@@ -80,8 +93,8 @@ public class UserServiceImpl implements UserService {
 		existingUser.setUserAbout(userDto.getUserAbout());
 
 		userRepository.save(existingUser);
-		UserDto userDtoUpdated = userMapper.userToDto(existingUser);
-		return userDtoUpdated;
+		UserResponseDto userResponseDto = userMapper.userToResponseDto(existingUser);
+		return userResponseDto;
 
 	}
 
@@ -113,19 +126,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserDto> searchUsersStartingWith(String userName) {
+	public List<UserResponseDto> searchUsersStartingWith(String userName) {
 		List<User> users = userRepository.searchByUserName(userName);
 		if (users.isEmpty()) {
 			throw new UserNotFoundException("User " + userName + " does not exist.");
 		}
 
-		List<UserDto> userDto = users.stream().map((user) -> userMapper.userToDto(user)).collect(Collectors.toList());
-		return userDto;
+		List<UserResponseDto> userResponseDto = users.stream().map((user) -> userMapper.userToResponseDto(user)).collect(Collectors.toList());
+		return userResponseDto;
 
 	}
 
 	@Override
-	public UserDto registerNewUser(UserDto userDto) {
+	public UserResponseDto registerNewUser(UserDto userDto) {
 		User user = userMapper.dtoToUser(userDto);
 
 		User userData = userRepository.findByUserEmail(user.getUserEmail());
@@ -140,9 +153,9 @@ public class UserServiceImpl implements UserService {
 			user.getRoles().add(role);
 			userRepository.save(user);
 
-			UserDto registeredUserDto = userMapper.userToDto(user);
+			UserResponseDto userResponseDto = userMapper.userToResponseDto(user);
 
-			return registeredUserDto;
+			return userResponseDto;
 		}
 	}
 
