@@ -20,6 +20,7 @@ import com.website.blogapp.payload.UserDto;
 import com.website.blogapp.payload.UserResponseDto;
 import com.website.blogapp.service.UserService;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -42,6 +43,7 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
 	}
 
+	@Hidden
 	@PostMapping("/create")
 	public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserDto userDto) {
 		UserResponseDto userResponseDto = userService.createUser(userDto);
