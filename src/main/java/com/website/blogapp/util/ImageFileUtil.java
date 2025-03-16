@@ -15,7 +15,7 @@ public class ImageFileUtil {
 		}
 
 		// Get file extension
-		String imageFileExtension = imagefileName.substring(imagefileName.lastIndexOf(".") + 1).toLowerCase();
+		String imageFileExtension = ImageFileUtil.getFileExtension(imagefileName);
 
 		// Allowed image types
 		List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "webp", "avif");
@@ -28,7 +28,7 @@ public class ImageFileUtil {
 
 	}
 
-	public String createRandomFileName(String fileExtension) {
+	public static String createRandomFileName(String fileExtension) {
 		// Generate a random file name
 		String randomID = UUID.randomUUID().toString();
 		String randomFileName = randomID.concat("." + fileExtension);
@@ -36,7 +36,7 @@ public class ImageFileUtil {
 
 	}
 
-	public String getFilePath(String path, String randomImageFileName) {
+	public static String getFilePath(String path, String randomImageFileName) {
 		// Generate a file path
 		String imageFilePath = path + File.separator + randomImageFileName;
 		return imageFilePath;
@@ -49,4 +49,29 @@ public class ImageFileUtil {
 			directory.mkdirs();
 		}
 	}
+
+	public static String getFileExtension(String fileName) {
+		return fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+	}
+
+	public static String getContentType(String fileExtension) {
+		switch (fileExtension) {
+		case "jpg":
+		case "jpeg":
+			return "image/jpeg";
+		case "png":
+			return "image/png";
+		case "gif":
+			return "image/gif";
+		case "bmp":
+			return "image/bmp";
+		case "webp":
+			return "image/webp";
+		case "avif":
+			return "image/avif";
+		default:
+			return "application/octet-stream";
+		}
+	}
+
 }
