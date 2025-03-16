@@ -1,8 +1,6 @@
 package com.website.blogapp.controller;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
 import java.util.List;
 
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -135,9 +132,8 @@ public class PostController {
 	// Image Upload
 	@PostMapping(value = "/image/upload/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<PostResponseDto> uploadImage(@PathVariable("postId") Integer postId,
-			@Parameter(description = "Image file for the post (optional)") @RequestParam(value = "postImageFile", required = true) MultipartFile postImageFile
-
-	) throws IOException {
+			@Parameter(description = "Image file for the post (optional)") @RequestParam(value = "postImageFile", required = true) MultipartFile postImageFile)
+			throws IOException {
 
 		PostResponseDto postResponseDto = postService.getSinglePost(postId);
 		PostDto postDto = postMapper.postDtoToPostResponseDto(postResponseDto);
@@ -151,13 +147,10 @@ public class PostController {
 	}
 
 	// Image Download
-	@GetMapping(value = "/image/download/{postImageFile}", produces = MediaType.IMAGE_JPEG_VALUE)
+	@GetMapping(value = "/image/download/{postImageFile}")
 	public void downloadImage(@PathVariable("postImageFile") String postImageFile, HttpServletResponse response)
-			throws FileNotFoundException, IOException {
-		InputStream inputStream = fileService.downloadImage(path, postImageFile);
-		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-		StreamUtils.copy(inputStream, response.getOutputStream());
-
+			throws IOException {
+		fileService.downloadImage(path, postImageFile, response);
 	}
 
 	@GetMapping("/category/{categoryId}/postTitle/{postTitle}")

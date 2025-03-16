@@ -19,6 +19,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -342,16 +343,28 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
 
 	}
-	
+
 	@ExceptionHandler(JsonParseException.class)
-	public ResponseEntity<ErrorMessage> jsonParseExceptionHandler(JsonParseException ex,
-			WebRequest webRequest) {
-		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date()).statusCode(HttpStatus.BAD_REQUEST.value())
-				.message("Invalid JSON format in 'postDto'. Please provide a correctly formatted JSON string").description(webRequest.getDescription(false)).success(false).build();
+	public ResponseEntity<ErrorMessage> jsonParseExceptionHandler(JsonParseException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.message("Invalid JSON format in 'postDto'. Please provide a correctly formatted JSON string")
+				.description(webRequest.getDescription(false)).success(false).build();
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
 
 	}
-	
+
+	@ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+	public ResponseEntity<ErrorMessage> httpMediaTypeNotAcceptableExceptionHandler(
+			HttpMediaTypeNotAcceptableException ex, WebRequest webRequest) {
+		ErrorMessage errorMessage = ErrorMessage.builder().timestamp(new Date())
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.message("Invalid JSON format in 'postDto'. Please provide a correctly formatted JSON string")
+				.description(webRequest.getDescription(false)).success(false).build();
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+
+	}
 
 }

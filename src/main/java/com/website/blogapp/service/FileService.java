@@ -1,14 +1,14 @@
 package com.website.blogapp.service;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface FileService {
 	public String uploadImage(String path, MultipartFile file) throws IOException;
 
-	public InputStream downloadImage(String path, String randomFileName) throws FileNotFoundException;
+	public void downloadImage(String path, String postImageFile, HttpServletResponse response) throws IOException;
 
 }
